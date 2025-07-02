@@ -1,6 +1,6 @@
 {
   "stage": "followups_active",
-  "last_updated": "2025-07-03T01:39:19.067140",
+  "last_updated": "2025-07-03T02:43:22.830792",
   "total_apps": 1,
   "apps_with_contacts": 1,
   "status": "completed",
@@ -9,7 +9,7 @@
   "total_failed": 0,
   "config": {
     "followup_delay_hours": 0,
-    "followup_delay_minutes": 5,
+    "followup_delay_minutes": 1,
     "max_followups": 2,
     "test_mode": false,
     "sender_name": "Vaibhav from UndrAds",
