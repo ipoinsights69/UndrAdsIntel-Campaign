@@ -23,6 +23,36 @@ import schedule
 # Load environment variables from .env file
 load_dotenv()
 
+# Function to reload environment variables
+def reload_env_vars():
+    """Reload environment variables from .env file and update global variables"""
+    # Reload environment variables with override=True to force update
+    load_dotenv(override=True)
+    
+    # Update global variables
+    global openai_api_key, openai_client, GMAIL_USER, GMAIL_PASSWORD, TEST_EMAIL, EMAIL_SENDER_NAME, EMAIL_REPLY_TO, OPENAI_MODEL
+    
+    # Refresh environment variables
+    openai_api_key = os.environ.get("OPENAI_API_KEY", "")
+    GMAIL_USER = os.environ.get("GMAIL_USER", "")
+    GMAIL_PASSWORD = os.environ.get("GMAIL_PASSWORD", "")
+    TEST_EMAIL = os.environ.get("TEST_EMAIL", "")
+    EMAIL_SENDER_NAME = os.environ.get("EMAIL_SENDER_NAME", "UndrApp Intel")
+    EMAIL_REPLY_TO = os.environ.get("EMAIL_REPLY_TO", GMAIL_USER)
+    OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o")
+    
+    # Reinitialize OpenAI client with new API key
+    try:
+        import httpx
+        http_client = httpx.Client()
+        openai_client = OpenAI(api_key=openai_api_key, http_client=http_client)
+    except Exception as e:
+        logger.error(f"Error reinitializing OpenAI client: {e}")
+        openai_client = OpenAI(api_key=openai_api_key)
+    
+    logger.info("Environment variables reloaded successfully")
+    return True
+
 # ==============================================================================
 # 1. SETUP & CONFIGURATION
 # ==============================================================================

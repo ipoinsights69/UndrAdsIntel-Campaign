@@ -157,7 +157,11 @@ def settings():
             with open(env_path, 'w') as f:
                 f.writelines(env_content)
             
-            success_message = "Settings updated successfully. Restart the application for changes to take effect."
+            # Import and call the reload_env_vars function from main.py
+            from main import reload_env_vars
+            reload_env_vars()
+            
+            success_message = "Settings updated successfully and applied immediately."
             
             # Reload current settings
             current_settings = {}
