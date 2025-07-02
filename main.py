@@ -395,6 +395,12 @@ def send_emails_background(campaign_id: str, config: EmailConfig, limit: Optiona
                     logger.info(f"Reply detected for app {app_index} before initial send. Skipping.")
                     update_app_email_status(campaign_id, app_index, "email1", EmailStatus.SKIPPED_REPLY)
                     skipped_count += 1; continue
+                
+                # Check if emails field exists in generated_emails
+                if "emails" not in app["generated_emails"]:
+                    logger.error(f"No 'emails' field in generated_emails for app {app_index}")
+                    update_app_email_status(campaign_id, app_index, "email1", EmailStatus.FAILED, "Missing emails data")
+                    failed_count += 1; continue
                     
                 subject, body = app["generated_emails"]["emails"]["subject"], app["generated_emails"]["emails"]["email1"]
                 all_sent_successfully = all(send_email_smtp(email, subject, body, config.sender_name, config.test_mode, config.test_email) for email in emails_to_send)
@@ -434,7 +440,14 @@ def schedule_followup(campaign_id: str, app_index: int, followup_num: int, confi
                 if check_for_replies(emails_to_send, since_date):
                     logger.info(f"Reply received for app {app_index}, skipping follow-up {followup_num}.")
                     update_app_email_status(campaign_id, app_index, f"follow{followup_num}", EmailStatus.SKIPPED_REPLY); return
-            emails, followup_key = app.get("generated_emails", {}).get("emails", {}), f"follow{followup_num}"
+            
+            # Check if emails field exists in generated_emails
+            generated_emails = app.get("generated_emails", {})
+            if "emails" not in generated_emails:
+                logger.error(f"No 'emails' field in generated_emails for app {app_index}")
+                update_app_email_status(campaign_id, app_index, f"follow{followup_num}", EmailStatus.FAILED, "Missing emails data"); return
+                
+            emails, followup_key = generated_emails.get("emails", {}), f"follow{followup_num}"
             if followup_key not in emails: return
             subject, body = f"Re: {emails.get('subject', 'Following up')}", emails[followup_key]
             all_sent_successfully = all(send_email_smtp(email, subject, body, config.sender_name, config.test_mode, config.test_email) for email in emails_to_send)
@@ -540,7 +553,7 @@ def generate_email_preview():
                 try:
                     # Get selected emails for this app if provided, otherwise use all extracted emails
                     selected_emails_dict = params.get('selected_emails', {})
-                    selected_emails = selected_emails_dict[str(index)] if str(index) in selected_emails_dict else []
+                    selected_emails = selected_emails_dict.get(str(index), []) if isinstance(selected_emails_dict, dict) else []
                     
                     # If selected emails are provided, temporarily replace the extracted_emails in the app data
                     original_emails = app.get('extracted_emails', [])
@@ -602,6 +615,16 @@ def send_emails_start():
             "error": "Cannot send emails because not all apps have their emails generated",
             "apps_with_contacts": len(apps_with_contacts),
             "apps_without_emails": len(apps_without_emails),
+            "success": False
+        }), 400
+        
+    # Check if all apps have the 'emails' field in their generated_emails
+    apps_missing_emails_field = [app for app in apps_with_contacts if not app.get("generated_emails", {}).get("emails")]
+    if apps_missing_emails_field:
+        return jsonify({
+            "error": "Cannot send emails because some apps are missing the 'emails' field in their generated emails",
+            "apps_with_contacts": len(apps_with_contacts),
+            "apps_missing_emails_field": len(apps_missing_emails_field),
             "success": False
         }), 400
     
