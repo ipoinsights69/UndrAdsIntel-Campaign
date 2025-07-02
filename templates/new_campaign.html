@@ -435,39 +435,7 @@
             </div>
         </div>
         
-        <!-- Preview Section -->
-        <div class="mb-6">
-            <div class="mb-4">
-                <label for="preview-extra-prompt" class="label">Extra Prompt (Optional)</label>
-                <textarea id="preview-extra-prompt" class="input-field" rows="3" placeholder="Add any additional instructions for the AI when generating emails..."></textarea>
-                <p class="text-sm text-gray-500 mt-1">Provide additional context or specific instructions to guide the email generation.</p>
-            </div>
-            <button id="generate-preview" class="btn-primary w-full py-3 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                Generate Email Preview for Selected Apps
-            </button>
-            
-            <!-- Preview Loader -->
-            <div id="preview-loader" class="hidden mt-6 bg-blue-50 rounded-lg border border-blue-100 p-6">
-                <div class="flex items-center">
-                    <svg class="animate-spin mr-4 h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <div>
-                        <h3 class="font-medium text-primary text-lg">Generating Email Previews</h3>
-                        <p class="text-sm text-gray-600">Creating personalized email templates for selected apps...</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Preview Results -->
-            <div id="preview-results" class="hidden mt-6 space-y-4">
-                <!-- Previews will be populated here -->
-            </div>
-        </div>
+        <!-- No preview section here anymore, moved to step 5 -->
         
         <div class="flex justify-between items-center">
             <button id="back-to-step-3" class="btn-secondary flex items-center">
@@ -488,7 +456,43 @@
     <!-- Step 5: Generate Final Emails -->
     <div id="step-5" class="step">
         <h2 class="text-xl font-bold mb-4">Generate Final Emails</h2>
-        <p class="mb-4">Configure email generation settings:</p>
+        <p class="mb-4">First, generate a preview to see how your emails will look:</p>
+        
+        <!-- Preview Section -->
+        <div class="mb-6">
+            <div class="mb-4">
+                <label for="preview-extra-prompt" class="label">Extra Prompt (Optional)</label>
+                <textarea id="preview-extra-prompt" class="input-field" rows="3" placeholder="Add any additional instructions for the AI when generating emails..."></textarea>
+                <p class="text-sm text-gray-500 mt-1">Provide additional context or specific instructions to guide the email generation.</p>
+            </div>
+            <button id="generate-preview" class="btn-primary w-full py-3 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Generate Email Preview
+            </button>
+            
+            <!-- Preview Loader -->
+            <div id="preview-loader" class="hidden mt-6 bg-blue-50 rounded-lg border border-blue-100 p-6">
+                <div class="flex items-center">
+                    <svg class="animate-spin mr-4 h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="font-medium text-primary text-lg">Generating Email Preview</h3>
+                        <p class="text-sm text-gray-600">Creating a personalized email template...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Preview Results -->
+            <div id="preview-results" class="hidden mt-6 space-y-4">
+                <!-- Previews will be populated here -->
+            </div>
+        </div>
+        
+        <p class="mb-4">Now, configure email generation settings for all apps:</p>
         
         <form id="generate-emails-form" class="mb-6">
             <div class="mb-4">
@@ -1633,19 +1637,25 @@
     document.getElementById('generate-preview').addEventListener('click', function() {
         updateSelectedApps();
         
-        if (campaignData.selected_app_indices.length === 0) {
-            showAlert('Please select at least one app for preview.', 'error');
+        // Get the first app with contacts for preview
+        const appsWithContacts = allApps.filter(app => app.has_contacts);
+        
+        if (appsWithContacts.length === 0) {
+            showAlert('No apps with contacts found. Please add contacts first.', 'error');
             return;
         }
         
-        // Collect selected emails for each app
-        const selectedAppsWithEmails = campaignData.selected_app_indices.map(index => {
-            const app = allApps.find(a => a.app_index === index);
-            return {
-                app_index: index,
-                selected_emails: app.selectedEmails || app.extracted_emails // Use selected emails if available, otherwise use all
-            };
-        });
+        // Use only the first app for preview
+        const firstApp = appsWithContacts[0];
+        const appIndex = firstApp.app_index;
+        
+        // Create a selectedAppsWithEmails object with just the first app
+        const selectedAppsWithEmails = {
+            [appIndex]: {
+                app_index: appIndex,
+                selected_emails: firstApp.selectedEmails || firstApp.extracted_emails // Use selected emails if available, otherwise use all
+            }
+        };
         
         // Show loader
         document.getElementById('preview-loader').classList.remove('hidden');
@@ -1665,10 +1675,10 @@
             },
             body: JSON.stringify({
                 campaign_id: campaignData.campaign_id,
-                app_indices: campaignData.selected_app_indices,
+                app_indices: [appIndex], // Only use the first app's index
                 selected_keys: campaignData.selected_keys,
-                tone: 'conversational',
-                num_followups: 3,
+                tone: document.getElementById('email-tone').value || 'conversational',
+                num_followups: parseInt(document.getElementById('num-followups').value) || 3,
                 selected_emails: selectedAppsWithEmails,
                 extra_prompt: extraPrompt
             })
@@ -1855,6 +1865,12 @@
     // Continue to Step 5
     document.getElementById('continue-to-step-5').addEventListener('click', function() {
         goToStep(5);
+        
+        // Copy the extra prompt from preview to email generation form if it exists
+        const previewExtraPrompt = document.getElementById('preview-extra-prompt').value;
+        if (previewExtraPrompt) {
+            document.getElementById('email-extra-prompt').value = previewExtraPrompt;
+        }
     });
     
     // Step 5: Generate Final Emails
