@@ -243,7 +243,7 @@ def generate_emails_logic(app_data_full: Dict, selected_keys: List[str], tone: s
     return parsed_emails
 
 
-git def generate_preview(prompt: str, contact_data: Dict[str, str], common_keys: List[str]) -> str:
+def generate_preview(prompt: str, contact_data: Dict[str, str], common_keys: List[str]) -> str:
     """Generate a preview email for a single contact."""
     try:
         # Create a personalized system message with contact data
