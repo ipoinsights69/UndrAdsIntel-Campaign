@@ -539,7 +539,8 @@ def generate_email_preview():
                 if not app.get('has_contacts'): previews.append({"app_index": index, "status": "skipped", "reason": "No contacts"}); continue
                 try:
                     # Get selected emails for this app if provided, otherwise use all extracted emails
-                    selected_emails = params.get('selected_emails', {}).get(str(index), [])
+                    selected_emails_dict = params.get('selected_emails', {})
+                    selected_emails = selected_emails_dict[str(index)] if str(index) in selected_emails_dict else []
                     
                     # If selected emails are provided, temporarily replace the extracted_emails in the app data
                     original_emails = app.get('extracted_emails', [])
