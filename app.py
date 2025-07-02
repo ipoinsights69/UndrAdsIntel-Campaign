@@ -126,6 +126,7 @@ def settings():
             new_settings = {
                 'OPENAI_API_KEY': request.form.get('openai_api_key', ''),
                 'OPENAI_MODEL': request.form.get('openai_model', 'gpt-4o'),
+                'SYSTEM_PROMPT': request.form.get('system_prompt', ''),
                 'GMAIL_USER': request.form.get('gmail_user', ''),
                 'GMAIL_PASSWORD': request.form.get('gmail_password', ''),
                 'TEST_EMAIL': request.form.get('test_email', ''),
@@ -174,6 +175,7 @@ def settings():
     template_settings = {
         'openai_api_key': current_settings.get('OPENAI_API_KEY', ''),
         'openai_model': current_settings.get('OPENAI_MODEL', 'gpt-4o'),
+        'system_prompt': current_settings.get('SYSTEM_PROMPT', ''),
         'gmail_user': current_settings.get('GMAIL_USER', ''),
         'gmail_password': current_settings.get('GMAIL_PASSWORD', ''),
         'test_email': current_settings.get('TEST_EMAIL', ''),

@@ -56,6 +56,16 @@
         "status": "sent",
         "timestamp": "2025-07-03T01:39:19.062156",
         "error": null
+      },
+      "follow1": {
+        "status": "sent",
+        "timestamp": "2025-07-03T01:44:24.659200",
+        "error": null
+      },
+      "follow2": {
+        "status": "sent",
+        "timestamp": "2025-07-03T01:49:30.160692",
+        "error": null
       }
     },
     "generated_emails": {

@@ -437,6 +437,11 @@
         
         <!-- Preview Section -->
         <div class="mb-6">
+            <div class="mb-4">
+                <label for="preview-extra-prompt" class="label">Extra Prompt (Optional)</label>
+                <textarea id="preview-extra-prompt" class="input-field" rows="3" placeholder="Add any additional instructions for the AI when generating emails..."></textarea>
+                <p class="text-sm text-gray-500 mt-1">Provide additional context or specific instructions to guide the email generation.</p>
+            </div>
             <button id="generate-preview" class="btn-primary w-full py-3 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -506,6 +511,12 @@
                 <label for="email-limit" class="label">Limit (Optional)</label>
                 <input type="number" id="email-limit" name="limit" class="input-field" min="1" placeholder="Leave empty for no limit">
                 <p class="text-sm text-gray-500 mt-1">Limit the number of emails to generate. Leave empty to generate for all apps with contacts.</p>
+            </div>
+            
+            <div class="mb-4">
+                <label for="email-extra-prompt" class="label">Extra Prompt (Optional)</label>
+                <textarea id="email-extra-prompt" name="extra_prompt" class="input-field" rows="3" placeholder="Add any additional instructions for the AI when generating emails..."></textarea>
+                <p class="text-sm text-gray-500 mt-1">Provide additional context or specific instructions to guide the email generation.</p>
             </div>
             
             <div class="flex justify-between items-center">
@@ -1643,6 +1654,9 @@
         // Scroll to the preview section
         document.getElementById('preview-loader').scrollIntoView({ behavior: 'smooth' });
         
+        // Get extra prompt if provided
+        const extraPrompt = document.getElementById('preview-extra-prompt').value.trim();
+        
         // Call the preview API
         fetch('/campaign/generate-preview', {
             method: 'POST',
@@ -1655,7 +1669,8 @@
                 selected_keys: campaignData.selected_keys,
                 tone: 'conversational',
                 num_followups: 3,
-                selected_emails: selectedAppsWithEmails
+                selected_emails: selectedAppsWithEmails,
+                extra_prompt: extraPrompt
             })
         })
         .then(response => response.json())
@@ -1866,6 +1881,9 @@
             };
         });
         
+        // Get extra prompt if provided
+        const extraPrompt = document.getElementById('email-extra-prompt').value.trim();
+        
         // Call the generate emails API
         fetch('/campaign/generate-emails', {
             method: 'POST',
@@ -1878,7 +1896,8 @@
                 tone: tone,
                 num_followups: numFollowups,
                 selected_keys: campaignData.selected_keys,
-                selected_emails: selectedAppsWithEmails
+                selected_emails: selectedAppsWithEmails,
+                extra_prompt: extraPrompt
             })
         })
         .then(response => response.json())

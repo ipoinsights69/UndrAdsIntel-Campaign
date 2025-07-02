@@ -34,6 +34,11 @@
                     <option value="gpt-3.5-turbo" {% if settings.openai_model == 'gpt-3.5-turbo' %}selected{% endif %}>GPT-3.5 Turbo</option>
                 </select>
             </div>
+            <div class="mb-4">
+                <label for="system_prompt" class="label">System Prompt</label>
+                <textarea id="system_prompt" name="system_prompt" rows="6" class="input-field w-full">{{ settings.system_prompt }}</textarea>
+                <p class="text-sm text-gray-500 mt-1">Custom system prompt for email generation. Leave blank to use the default.</p>
+            </div>
         </div>
         
         <div class="mb-8">

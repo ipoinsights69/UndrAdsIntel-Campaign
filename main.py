@@ -219,16 +219,36 @@ def calculate_campaign_stats(data: List[Dict]) -> Dict:
 # 4. BACKGROUND TASK WORKERS
 # ==============================================================================
 
-def generate_emails_logic(app_data_full: Dict, selected_keys: List[str], tone: str, num_followups: int) -> Dict:
-    system_prompt = f"""
-    You are an expert SaaS sales representative for UndrAds, an AI-powered ad monetization platform.
+def generate_emails_logic(app_data_full: Dict, selected_keys: List[str], tone: str, num_followups: int, extra_prompt: str = None) -> Dict:
+    # Get custom system prompt from environment variables if available
+    custom_system_prompt = os.environ.get("SYSTEM_PROMPT", "")
+    
+    hardcoded_promt = """You are an expert SaaS sales representative for UndrAds, an AI-powered ad monetization platform.
     Your task is to create a personalized, engaging email sequence.
     - Analyze the provided app data to personalize emails.
     - Highlight how UndrAds automates ad operations and optimizes revenue.
     - Use a {tone} tone.
     - Create {num_followups + 1} emails total: 1 initial outreach + {num_followups} follow-ups.
     - Respond ONLY with valid JSON with keys: "subject", "email1", and "follow1", "follow2", etc., up to "follow{num_followups}".
-    """
+
+hard code this promt """
+    # Use custom system prompt if available, otherwise use default
+    if custom_system_prompt:
+        system_prompt = custom_system_prompt + hardcoded_promt
+    else:
+        system_prompt = f"""
+        You are an expert SaaS sales representative for UndrAds, an AI-powered ad monetization platform.
+        Your task is to create a personalized, engaging email sequence.
+        - Analyze the provided app data to personalize emails.
+        - Highlight how UndrAds automates ad operations and optimizes revenue.
+        - Use a {tone} tone.
+        - Create {num_followups + 1} emails total: 1 initial outreach + {num_followups} follow-ups.
+        - Respond ONLY with valid JSON with keys: "subject", "email1", and "follow1", "follow2", etc., up to "follow{num_followups}".
+        """
+    
+    # Add extra prompt if provided
+    if extra_prompt:
+        system_prompt += f"\n\nAdditional instructions: {extra_prompt}"
     app_data_for_gpt = {key: value for key, value in app_data_full.items() if key in selected_keys}
     essential_fields = {"app_name": app_data_full.get("app_name"), "extracted_emails": app_data_full.get("extracted_emails")}
     app_data_for_gpt.update(essential_fields)
@@ -243,13 +263,23 @@ def generate_emails_logic(app_data_full: Dict, selected_keys: List[str], tone: s
     return parsed_emails
 
 
-def generate_preview(prompt: str, contact_data: Dict[str, str], common_keys: List[str]) -> str:
+def generate_preview(prompt: str, contact_data: Dict[str, str], common_keys: List[str], extra_prompt: str = None) -> str:
     """Generate a preview email for a single contact."""
     try:
-        # Create a personalized system message with contact data
-        system_message = f"""You are an AI assistant that writes personalized emails. 
-        Use the following information about the recipient to personalize the email:
-        """
+        # Get custom system prompt from environment variables if available
+        custom_system_prompt = os.environ.get("SYSTEM_PROMPT", "")
+        
+        # Use custom system prompt if available, otherwise use default
+        if custom_system_prompt:
+            system_message = custom_system_prompt
+        else:
+            system_message = f"""You are an AI assistant that writes personalized emails. 
+            Use the following information about the recipient to personalize the email:
+            """
+        
+        # Add extra prompt if provided
+        if extra_prompt:
+            system_message += f"\n\nAdditional instructions: {extra_prompt}"
         
         # Add contact information to system message
         for key, value in contact_data.items():
@@ -279,7 +309,7 @@ def generate_preview(prompt: str, contact_data: Dict[str, str], common_keys: Lis
 
 
 def generate_emails_background(campaign_id: str, limit: Optional[int], tone: str, num_followups: int,
-                               selected_keys: List[str], selected_emails: Dict[str, List[str]] = None):
+                               selected_keys: List[str], selected_emails: Dict[str, List[str]] = None, extra_prompt: str = None):
     lock = get_campaign_lock(campaign_id)
     try:
         # Load data once ONLY to determine the list of work to do.
@@ -313,10 +343,10 @@ def generate_emails_background(campaign_id: str, limit: Optional[int], tone: str
                     app_copy = copy.deepcopy(app_data_for_generation)
                     app_copy['extracted_emails'] = app_selected_emails
                     # 1. Perform the slow API call OUTSIDE the lock to not block other threads.
-                    parsed_emails = generate_emails_logic(app_copy, selected_keys, tone, num_followups)
+                    parsed_emails = generate_emails_logic(app_copy, selected_keys, tone, num_followups, extra_prompt)
                 else:
                     # 1. Perform the slow API call OUTSIDE the lock to not block other threads.
-                    parsed_emails = generate_emails_logic(app_data_for_generation, selected_keys, tone, num_followups)
+                    parsed_emails = generate_emails_logic(app_data_for_generation, selected_keys, tone, num_followups, extra_prompt)
 
                 # 2. Acquire the lock to perform a safe, atomic update.
                 with lock:
@@ -546,6 +576,9 @@ def generate_email_preview():
         data = load_campaign_data(campaign_id);
         if not data: return jsonify({"error": "Campaign not found"}), 404
         previews = []
+        # Get extra_prompt if provided
+        extra_prompt = params.get('extra_prompt')
+        
         for index in app_indices:
             if 0 <= index < len(data):
                 app = data[index]
@@ -560,9 +593,9 @@ def generate_email_preview():
                     if selected_emails:
                         app_copy = copy.deepcopy(app)
                         app_copy['extracted_emails'] = selected_emails
-                        content = generate_emails_logic(app_copy, params.get('selected_keys', []), params.get('tone', 'conversational'), params.get('num_followups', 3))
+                        content = generate_emails_logic(app_copy, params.get('selected_keys', []), params.get('tone', 'conversational'), params.get('num_followups', 3), extra_prompt)
                     else:
-                        content = generate_emails_logic(app, params.get('selected_keys', []), params.get('tone', 'conversational'), params.get('num_followups', 3))
+                        content = generate_emails_logic(app, params.get('selected_keys', []), params.get('tone', 'conversational'), params.get('num_followups', 3), extra_prompt)
                     
                     previews.append({"app_index": index, "status": "success", "content": content})
                 except Exception as e: logger.error(f"Preview failed for app {index}: {e}"); previews.append({"app_index": index, "status": "failed", "error": str(e)})
@@ -576,7 +609,7 @@ def generate_emails_start():
     campaign_id = params.get('campaign_id')
     if not campaign_id: return jsonify({"error": "campaign_id is required"}), 400
     if campaign_id in background_tasks: return jsonify({"message": "A task is already running for this campaign"}), 409
-    thread = threading.Thread(target=generate_emails_background, args=(campaign_id, params.get('limit'), params.get('tone', 'conversational'), params.get('num_followups', 3), params.get('selected_keys', []), params.get('selected_emails', {})))
+    thread = threading.Thread(target=generate_emails_background, args=(campaign_id, params.get('limit'), params.get('tone', 'conversational'), params.get('num_followups', 3), params.get('selected_keys', []), params.get('selected_emails', {}), params.get('extra_prompt')))
     thread.daemon = True; thread.start()
     background_tasks[campaign_id] = {"thread": thread, "type": "generation", "started_at": time.time()}
     return jsonify({"message": "Email generation started in background"}), 202
