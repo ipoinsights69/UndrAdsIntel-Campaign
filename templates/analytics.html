@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Analytics Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .card-shadow {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .card-shadow:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .progress-bar {
+            transition: width 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Page Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
+                <div class="flex space-x-3">
+                    <button id="refreshBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center transition-colors duration-300">
+                        <i class="fas fa-sync-alt mr-2"></i> Refresh Data
+                    </button>
+                    <a href="/" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-md flex items-center transition-colors duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-12 gap-6">
+            <!-- Main Content (9 columns) -->
+            <div class="col-span-12 lg:col-span-9 space-y-6">
+                <!-- Overall Stats Cards -->
+                <section>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Overall Stats</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Total Campaigns Card -->
+                        <div class="bg-white rounded-lg p-5 card-shadow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500">Total Campaigns</p>
+                                    <div class="flex items-baseline">
+                                        <h3 id="totalCampaigns" class="text-2xl font-bold text-gray-900">0</h3>
+                                        <span class="ml-2 text-xs text-gray-500">All time</span>
+                                    </div>
+                                    <div id="campaignGrowth" class="mt-2 flex items-center text-sm"></div>
+                                </div>
+                                <div class="p-3 bg-blue-100 rounded-full">
+                                    <i class="fas fa-bullhorn text-blue-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Apps Card -->
+                        <div class="bg-white rounded-lg p-5 card-shadow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500">Total Apps</p>
+                                    <div class="flex items-baseline">
+                                        <h3 id="totalApps" class="text-2xl font-bold text-gray-900">0</h3>
+                                        <span class="ml-2 text-xs text-gray-500">All time</span>
+                                    </div>
+                                    <div id="appGrowth" class="mt-2 flex items-center text-sm"></div>
+                                </div>
+                                <div class="p-3 bg-purple-100 rounded-full">
+                                    <i class="fas fa-mobile-alt text-purple-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Emails Sent Card -->
+                        <div class="bg-white rounded-lg p-5 card-shadow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500">Emails Sent</p>
+                                    <div class="flex items-baseline">
+                                        <h3 id="emailsSent" class="text-2xl font-bold text-gray-900">0</h3>
+                                        <span class="ml-2 text-xs text-gray-500">All time</span>
+                                    </div>
+                                    <div id="emailGrowth" class="mt-2 flex items-center text-sm"></div>
+                                </div>
+                                <div class="p-3 bg-green-100 rounded-full">
+                                    <i class="fas fa-paper-plane text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reply Rate Card -->
+                        <div class="bg-white rounded-lg p-5 card-shadow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500">Reply Rate</p>
+                                    <div class="flex items-baseline">
+                                        <h3 id="replyRate" class="text-2xl font-bold text-gray-900">0%</h3>
+                                        <span class="ml-2 text-xs text-gray-500">Average</span>
+                                    </div>
+                                    <div id="replyRateGrowth" class="mt-2 flex items-center text-sm"></div>
+                                </div>
+                                <div class="p-3 bg-yellow-100 rounded-full">
+                                    <i class="fas fa-reply text-yellow-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Campaign Comparison -->
+                <section class="bg-white rounded-lg p-6 card-shadow">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-semibold text-gray-800">Campaign Comparison</h2>
+                        <div class="flex space-x-3">
+                            <select id="campaignFilter" class="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="all">All Campaigns</option>
+                                <option value="active">Active</option>
+                                <option value="completed">Completed</option>
+                                <option value="paused">Paused</option>
+                            </select>
+                            <button id="exportBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-md text-sm flex items-center transition-colors duration-300">
+                                <i class="fas fa-download mr-1"></i> Export CSV
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campaign</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Emails Sent</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Opened</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Replied</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reply Rate</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="campaignsTable" class="bg-white divide-y divide-gray-200">
+                                <!-- Loading state -->
+                                <tr>
+                                    <td colspan="7" class="px-6 py-4">
+                                        <div class="flex justify-center">
+                                            <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Best Performing Campaigns -->
+                <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Highest Reply Rate -->
+                    <div class="bg-white rounded-lg p-6 card-shadow">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Highest Reply Rate</h2>
+                        <div id="highest-reply-rate" class="space-y-4">
+                            <!-- Loading state -->
+                            <div class="h-20 loading-skeleton rounded-lg"></div>
+                            <div class="h-20 loading-skeleton rounded-lg"></div>
+                            <div class="h-20 loading-skeleton rounded-lg"></div>
+                        </div>
+                    </div>
+
+                    <!-- Most Emails Sent -->
+                    <div class="bg-white rounded-lg p-6 card-shadow">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Most Emails Sent</h2>
+                        <div id="most-emails-sent" class="space-y-4">
+                            <!-- Loading state -->
+                            <div class="h-20 loading-skeleton rounded-lg"></div>
+                            <div class="h-20 loading-skeleton rounded-lg"></div>
+                            <div class="h-20 loading-skeleton rounded-lg"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Sidebar (3 columns) -->
+            <div class="col-span-12 lg:col-span-3 space-y-6">
+                <!-- Email Sequence Performance -->
+                <section class="bg-white rounded-lg p-6 card-shadow">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Email Sequence Performance</h2>
+                    <div class="space-y-4">
+                        <!-- Initial Emails -->
+                        <div class="p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <div class="h-6 w-6 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xs mr-2">1st</div>
+                                    <h3 class="font-medium text-gray-800">Initial Emails</h3>
+                                </div>
+                                <span id="initialEmailsSent" class="text-sm font-semibold">0</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                <span>Reply Rate</span>
+                                <span id="initialReplyRate">0%</span>
+                            </div>
+                            <div class="relative pt-1">
+                                <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                                    <div id="initialReplyBar" class="progress-bar bg-blue-500 rounded" style="width:0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Follow-up #1 -->
+                        <div class="p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <div class="h-6 w-6 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold text-xs mr-2">2nd</div>
+                                    <h3 class="font-medium text-gray-800">Follow-up #1</h3>
+                                </div>
+                                <span id="followup1Sent" class="text-sm font-semibold">0</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                <span>Reply Rate</span>
+                                <span id="followup1ReplyRate">0%</span>
+                            </div>
+                            <div class="relative pt-1">
+                                <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                                    <div id="followup1ReplyBar" class="progress-bar bg-blue-400 rounded" style="width:0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Follow-up #2 -->
+                        <div class="p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <div class="h-6 w-6 bg-blue-300 rounded-full flex items-center justify-center text-white font-bold text-xs mr-2">3rd</div>
+                                    <h3 class="font-medium text-gray-800">Follow-up #2</h3>
+                                </div>
+                                <span id="followup2Sent" class="text-sm font-semibold">0</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                <span>Reply Rate</span>
+                                <span id="followup2ReplyRate">0%</span>
+                            </div>
+                            <div class="relative pt-1">
+                                <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                                    <div id="followup2ReplyBar" class="progress-bar bg-blue-300 rounded" style="width:0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Follow-up #3 -->
+                        <div class="p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <div class="h-6 w-6 bg-blue-200 rounded-full flex items-center justify-center text-white font-bold text-xs mr-2">4th</div>
+                                    <h3 class="font-medium text-gray-800">Follow-up #3</h3>
+                                </div>
+                                <span id="followup3Sent" class="text-sm font-semibold">0</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                <span>Reply Rate</span>
+                                <span id="followup3ReplyRate">0%</span>
+                            </div>
+                            <div class="relative pt-1">
+                                <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                                    <div id="followup3ReplyBar" class="progress-bar bg-blue-200 rounded" style="width:0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sequence Effectiveness Visualization -->
+                        <div class="mt-6">
+                            <h3 class="text-sm font-medium text-gray-700 mb-2">Sequence Effectiveness</h3>
+                            <div class="flex items-end h-32 space-x-4">
+                                <div class="flex flex-col items-center">
+                                    <div id="initialBar" class="w-10 bg-blue-500 rounded-t" style="height:0%"></div>
+                                    <span class="text-xs mt-1">Initial</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div id="followup1Bar" class="w-10 bg-blue-400 rounded-t" style="height:0%"></div>
+                                    <span class="text-xs mt-1">Follow 1</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div id="followup2Bar" class="w-10 bg-blue-300 rounded-t" style="height:0%"></div>
+                                    <span class="text-xs mt-1">Follow 2</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div id="followup3Bar" class="w-10 bg-blue-200 rounded-t" style="height:0%"></div>
+                                    <span class="text-xs mt-1">Follow 3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Email Status Distribution -->
+                <section class="bg-white rounded-lg p-6 card-shadow">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Email Status Distribution</h2>
+                    
+                    <!-- Status Cards -->
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <!-- Sent Emails -->
+                        <div class="p-3 border border-gray-200 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-gray-500">Sent</p>
+                                    <p id="sentCount" class="text-lg font-semibold">0</p>
+                                </div>
+                                <div class="p-2 bg-green-100 rounded-full">
+                                    <i class="fas fa-paper-plane text-green-500 text-sm"></i>
+                                </div>
+                            </div>
+                            <p id="sentPercentage" class="text-xs text-gray-500 mt-1">0%</p>
+                        </div>
+                        
+                        <!-- Pending Emails -->
+                        <div class="p-3 border border-gray-200 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-gray-500">Pending</p>
+                                    <p id="pendingCount" class="text-lg font-semibold">0</p>
+                                </div>
+                                <div class="p-2 bg-yellow-100 rounded-full">
+                                    <i class="fas fa-clock text-yellow-500 text-sm"></i>
+                                </div>
+                            </div>
+                            <p id="pendingPercentage" class="text-xs text-gray-500 mt-1">0%</p>
+                        </div>
+                        
+                        <!-- Replied Emails -->
+                        <div class="p-3 border border-gray-200 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-gray-500">Replied</p>
+                                    <p id="repliedCount" class="text-lg font-semibold">0</p>
+                                </div>
+                                <div class="p-2 bg-blue-100 rounded-full">
+                                    <i class="fas fa-reply text-blue-500 text-sm"></i>
+                                </div>
+                            </div>
+                            <p id="repliedPercentage" class="text-xs text-gray-500 mt-1">0%</p>
+                        </div>
+                        
+                        <!-- Failed Emails -->
+                        <div class="p-3 border border-gray-200 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-gray-500">Failed</p>
+                                    <p id="failedCount" class="text-lg font-semibold">0</p>
+                                </div>
+                                <div class="p-2 bg-red-100 rounded-full">
+                                    <i class="fas fa-exclamation-triangle text-red-500 text-sm"></i>
+                                </div>
+                            </div>
+                            <p id="failedPercentage" class="text-xs text-gray-500 mt-1">0%</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Visualization -->
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-700 mb-2">Status Visualization</h3>
+                        <div class="space-y-2">
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>Sent</span>
+                                    <span id="sentPercentageBar">0%</span>
+                                </div>
+                                <div class="relative pt-1">
+                                    <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                                        <div id="sentBar" class="progress-bar bg-green-500 rounded" style="width:0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>Pending</span>
+                                    <span id="pendingPercentageBar">0%</span>
+                                </div>
+                                <div class="relative pt-1">
+                                    <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                                        <div id="pendingBar" class="progress-bar bg-yellow-500 rounded" style="width:0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>Replied</span>
+                                    <span id="repliedPercentageBar">0%</span>
+                                </div>
+                                <div class="relative pt-1">
+                                    <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                                        <div id="repliedBar" class="progress-bar bg-blue-500 rounded" style="width:0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>Failed</span>
+                                    <span id="failedPercentageBar">0%</span>
+                                </div>
+                                <div class="relative pt-1">
+                                    <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                                        <div id="failedBar" class="progress-bar bg-red-500 rounded" style="width:0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', fetchAnalytics);
+            
+            // Campaign filter
+            document.getElementById('campaignFilter').addEventListener('change', function() {
+                const filter = this.value;
+                // Re-render the campaigns table with the selected filter
+                const campaigns = window.analyticsData?.campaign_breakdown || [];
+                updateCampaignsTable(campaigns, filter);
+            });
+            
+            // Export button
+            document.getElementById('exportBtn').addEventListener('click', function() {
+                exportToCSV();
+            });
+            
+            // Initial data fetch
+            fetchAnalytics();
+        });
+        
+        // Fetch analytics data
+        function fetchAnalytics() {
+            showLoader();
+            
+            fetch('/analytics/overall')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Store data globally for filtering
+                    window.analyticsData = data;
+                    
+                    // Update UI with the data
+                    updateOverallStats(data.overall_summary);
+                    updateCampaignsTable(data.campaign_breakdown);
+                    updateBestPerforming(data.campaign_breakdown);
+                    
+                    hideLoader();
+                })
+                .catch(error => {
+                    console.error('Error fetching analytics:', error);
+                    showAlert('Failed to load analytics data. Please try again.');
+                    hideLoader();
+                });
+        }
+        
+        // Show loader
+        function showLoader() {
+            // Add loading state to components
+            document.querySelectorAll('.loading-skeleton').forEach(el => {
+                el.style.display = 'block';
+            });
+        }
+        
+        // Hide loader
+        function hideLoader() {
+            // Remove loading state from components
+            document.querySelectorAll('.loading-skeleton').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+        
+        // Show alert
+        function showAlert(message) {
+            alert(message); // Simple alert for now, can be replaced with a nicer UI component
+        }
+        
+        // Update overall stats
+        function updateOverallStats(data) {
+            if (!data) return;
+            
+            // Update overall stats cards
+            animateCounter('totalCampaigns', data.total_campaigns || 0);
+            animateCounter('totalApps', data.total_apps || 0);
+            animateCounter('emailsSent', data.initial_emails_sent || 0);
+            animateCounter('replyRate', data.overall_reply_rate || 0, '%');
+            
+            // Update growth indicators
+            const growth = data.growth || {};
+            updateGrowthIndicator('campaignGrowth', growth.campaign_growth || 0);
+            updateGrowthIndicator('appGrowth', growth.app_growth || 0);
+            updateGrowthIndicator('emailGrowth', growth.email_growth || 0);
+            updateGrowthIndicator('replyRateGrowth', growth.reply_rate_growth || 0);
+            
+            // Update email sequence stats
+            const sequence = data.email_sequence || {};
+            document.getElementById('initialEmailsSent').textContent = sequence.initial_emails_sent || 0;
+            document.getElementById('initialReplyRate').textContent = `${sequence.initial_reply_rate || 0}%`;
+            document.getElementById('initialReplyBar').style.width = `${sequence.initial_reply_rate || 0}%`;
+            
+            document.getElementById('followup1Sent').textContent = sequence.followup1_sent || 0;
+            document.getElementById('followup1ReplyRate').textContent = `${sequence.followup1_reply_rate || 0}%`;
+            document.getElementById('followup1ReplyBar').style.width = `${sequence.followup1_reply_rate || 0}%`;
+            
+            document.getElementById('followup2Sent').textContent = sequence.followup2_sent || 0;
+            document.getElementById('followup2ReplyRate').textContent = `${sequence.followup2_reply_rate || 0}%`;
+            document.getElementById('followup2ReplyBar').style.width = `${sequence.followup2_reply_rate || 0}%`;
+            
+            document.getElementById('followup3Sent').textContent = sequence.followup3_sent || 0;
+            document.getElementById('followup3ReplyRate').textContent = `${sequence.followup3_reply_rate || 0}%`;
+            document.getElementById('followup3ReplyBar').style.width = `${sequence.followup3_reply_rate || 0}%`;
+            
+            // Animate sequence effectiveness bars
+            setTimeout(() => {
+                document.getElementById('initialBar').style.height = `${sequence.initial_effectiveness || 0}%`;
+                document.getElementById('followup1Bar').style.height = `${sequence.followup1_effectiveness || 0}%`;
+                document.getElementById('followup2Bar').style.height = `${sequence.followup2_effectiveness || 0}%`;
+                document.getElementById('followup3Bar').style.height = `${sequence.followup3_effectiveness || 0}%`;
+            }, 100);
+            
+            // Update email status distribution
+            const status = data.email_status || {};
+            const totalEmails = status.sent + status.pending + status.replied + status.failed || 1; // Avoid division by zero
+            
+            // Calculate percentages
+            const sentPercentage = Math.round((status.sent / totalEmails) * 100) || 0;
+            const pendingPercentage = Math.round((status.pending / totalEmails) * 100) || 0;
+            const repliedPercentage = Math.round((status.replied / totalEmails) * 100) || 0;
+            const failedPercentage = Math.round((status.failed / totalEmails) * 100) || 0;
+            
+            // Update counters and percentages
+            document.getElementById('sentCount').textContent = status.sent || 0;
+            document.getElementById('sentPercentage').textContent = `${sentPercentage}%`;
+            document.getElementById('sentPercentageBar').textContent = `${sentPercentage}%`;
+            
+            document.getElementById('pendingCount').textContent = status.pending || 0;
+            document.getElementById('pendingPercentage').textContent = `${pendingPercentage}%`;
+            document.getElementById('pendingPercentageBar').textContent = `${pendingPercentage}%`;
+            
+            document.getElementById('repliedCount').textContent = status.replied || 0;
+            document.getElementById('repliedPercentage').textContent = `${repliedPercentage}%`;
+            document.getElementById('repliedPercentageBar').textContent = `${repliedPercentage}%`;
+            
+            document.getElementById('failedCount').textContent = status.failed || 0;
+            document.getElementById('failedPercentage').textContent = `${failedPercentage}%`;
+            document.getElementById('failedPercentageBar').textContent = `${failedPercentage}%`;
+            
+            // Animate status bars
+            animateWidth('sentBar', sentPercentage);
+            animateWidth('pendingBar', pendingPercentage);
+            animateWidth('repliedBar', repliedPercentage);
+            animateWidth('failedBar', failedPercentage);
+        }
+        
+        // Animate counter
+        function animateCounter(elementId, value, suffix = '') {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const startValue = parseInt(element.textContent) || 0;
+            const duration = 1000; // ms
+            const stepTime = 50; // ms
+            const steps = duration / stepTime;
+            const increment = (value - startValue) / steps;
+            
+            let currentValue = startValue;
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if ((increment >= 0 && currentValue >= value) || (increment < 0 && currentValue <= value)) {
+                    clearInterval(timer);
+                    element.textContent = Math.round(value) + suffix;
+                } else {
+                    element.textContent = Math.round(currentValue) + suffix;
+                }
+            }, stepTime);
+        }
+        
+        // Animate width
+        function animateWidth(elementId, percentage) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            element.style.transition = 'width 1s ease-in-out';
+            element.style.width = `${percentage}%`;
+        }
+        
+        // Update growth indicator
+        function updateGrowthIndicator(elementId, growthValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let icon, color, label;
+            
+            if (growthValue > 0) {
+                icon = 'fa-arrow-up';
+                color = 'text-green-600';
+                label = `+${growthValue}%`;
+            } else if (growthValue < 0) {
+                icon = 'fa-arrow-down';
+                color = 'text-red-600';
+                label = `${growthValue}%`;
+            } else {
+                icon = 'fa-minus';
+                color = 'text-gray-600';
+                label = '0%';
+            }
+            
+            element.innerHTML = `
+                <i class="fas ${icon} mr-1 ${color}"></i>
+                <span class="${color}">${label}</span>
+                <span class="text-gray-500 ml-1">vs. last period</span>
+            `;
+        }
+        
+        // Update campaigns table
+        function updateCampaignsTable(campaigns, filter = 'all') {
+            const tableBody = document.getElementById('campaignsTable');
+            tableBody.innerHTML = '';
+            
+            if (!campaigns || campaigns.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                            No campaigns found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Filter campaigns if needed
+            let filteredCampaigns = campaigns;
+            if (filter !== 'all') {
+                filteredCampaigns = campaigns.filter(campaign => campaign.status === filter);
+                
+                if (filteredCampaigns.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                No ${filter} campaigns found
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+            }
+            
+            // Sort campaigns by creation date (newest first)
+            filteredCampaigns.sort((a, b) => {
+                const dateA = a.creation_date ? new Date(a.creation_date) : new Date(0);
+                const dateB = b.creation_date ? new Date(b.creation_date) : new Date(0);
+                return dateB - dateA;
+            });
+            
+            // Create table rows
+            filteredCampaigns.forEach(campaign => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                
+                // Format creation date
+                const creationDate = campaign.creation_date ? 
+                    `<div class="text-xs text-gray-500 mt-1">Created ${new Date(campaign.creation_date).toLocaleDateString()}</div>` : '';
+                
+                // Status badge
+                let statusBadge = '';
+                if (campaign.status) {
+                    const statusColors = {
+                        'active': { bg: 'bg-green-100', text: 'text-green-800', label: 'Active' },
+                        'completed': { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Completed' },
+                        'paused': { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Paused' },
+                        'draft': { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Draft' }
+                    };
+                    const statusInfo = statusColors[campaign.status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: campaign.status };
+                    statusBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusInfo.bg} ${statusInfo.text}">
+                        ${statusInfo.label}
+                    </span>`;
+                }
+                
+                // Reply rate badge
+                const replyRate = campaign.reply_rate || 0;
+                let replyRateColor = 'bg-gray-100 text-gray-800';
+                if (replyRate >= 30) {
+                    replyRateColor = 'bg-green-100 text-green-800';
+                } else if (replyRate >= 15) {
+                    replyRateColor = 'bg-yellow-100 text-yellow-800';
+                } else if (replyRate > 0) {
+                    replyRateColor = 'bg-red-100 text-red-800';
+                }
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${campaign.campaign_id}</div>
+                        ${creationDate}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        ${statusBadge}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${campaign.initial_emails_sent || 0}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${campaign.opened || 0}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${campaign.total_replies || 0}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${replyRateColor}">
+                            ${replyRate}%
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <a href="/campaign/${campaign.campaign_id}" class="text-blue-600 hover:text-blue-900 mr-3">View</a>
+                        <a href="#" class="text-gray-600 hover:text-gray-900">Export</a>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // Update best performing campaigns
+        function updateBestPerforming(campaigns) {
+            updateHighestReplyRate(campaigns);
+            updateMostEmailsSent(campaigns);
+        }
+        
+        // Update highest reply rate section
+        function updateHighestReplyRate(campaigns) {
+            const container = document.getElementById('highest-reply-rate');
+            container.innerHTML = '';
+            
+            if (!campaigns || campaigns.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-8">
+                        <svg class="h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-gray-500">No campaigns found</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by reply rate
+            const sortedCampaigns = [...campaigns].sort((a, b) => {
+                const rateA = a.reply_rate || 0;
+                const rateB = b.reply_rate || 0;
+                return rateB - rateA;
+            }).slice(0, 3); // Get top 3
+            
+            sortedCampaigns.forEach((campaign, index) => {
+                const replyRate = campaign.reply_rate || 0;
+                
+                // Determine medal color based on index
+                let medalColor = '';
+                let medalText = '';
+                
+                switch(index) {
+                    case 0:
+                        medalColor = 'bg-yellow-500';
+                        medalText = '1st';
+                        break;
+                    case 1:
+                        medalColor = 'bg-gray-400';
+                        medalText = '2nd';
+                        break;
+                    case 2:
+                        medalColor = 'bg-yellow-700';
+                        medalText = '3rd';
+                        break;
+                }
+                
+                const div = document.createElement('div');
+                div.className = 'bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-all duration-300 mb-4';
+                
+                // Use creation_date from API if available
+                const creationDate = campaign.creation_date ? 
+                    `<div class="text-xs text-gray-500 mt-1">Created ${new Date(campaign.creation_date).toLocaleDateString()}</div>` : '';
+                
+                // Use status from API if available
+                let statusBadge = '';
+                if (campaign.status) {
+                    const statusColors = {
+                        'active': { bg: 'bg-green-100', text: 'text-green-800', label: 'Active' },
+                        'completed': { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Completed' },
+                        'paused': { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Paused' },
+                        'draft': { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Draft' }
+                    };
+                    const statusInfo = statusColors[campaign.status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: campaign.status };
+                    statusBadge = `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusInfo.bg} ${statusInfo.text}">
+                        ${statusInfo.label}
+                    </span>`;
+                }
+                
+                div.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <div class="h-8 w-8 ${medalColor} rounded-full flex items-center justify-center text-white font-bold text-xs mr-3">
+                                ${medalText}
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">${campaign.campaign_id}${statusBadge}</h3>
+                                ${creationDate}
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                            ${replyRate}%
+                        </span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600 mb-2">
+                        <span>${campaign.total_replies || 0} replies</span>
+                        <span>out of ${campaign.initial_emails_sent || 0} emails</span>
+                    </div>
+                    <div class="relative pt-1">
+                        <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                            <div class="bg-green-500 rounded-r" style="width:0%"></div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(div);
+                
+                // Animate progress bar
+                setTimeout(() => {
+                    const progressBar = div.querySelector('.bg-green-500');
+                    progressBar.style.transition = 'width 1s ease-in-out';
+                    progressBar.style.width = replyRate + '%';
+                }, 100 * index);
+            });
+        }
+        
+        // Update most emails sent section
+        function updateMostEmailsSent(campaigns) {
+            const container = document.getElementById('most-emails-sent');
+            container.innerHTML = '';
+            
+            if (!campaigns || campaigns.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-8">
+                        <svg class="h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-gray-500">No campaigns found</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by emails sent - use emails_sent from API if available
+            const sortedCampaigns = [...campaigns].sort((a, b) => {
+                return (b.emails_sent || b.initial_emails_sent || 0) - (a.emails_sent || a.initial_emails_sent || 0);
+            }).slice(0, 3); // Get top 3
+            
+            // Find max emails for scaling
+            const maxEmails = Math.max(...sortedCampaigns.map(c => c.emails_sent || c.initial_emails_sent || 0));
+            
+            sortedCampaigns.forEach((campaign, index) => {
+                const emailsSent = campaign.emails_sent || campaign.initial_emails_sent || 0;
+                const percentage = maxEmails > 0 ? (emailsSent / maxEmails * 100) : 0;
+                
+                // Determine medal color based on index
+                let medalColor = '';
+                let medalText = '';
+                
+                switch(index) {
+                    case 0:
+                        medalColor = 'bg-blue-500';
+                        medalText = '1st';
+                        break;
+                    case 1:
+                        medalColor = 'bg-blue-400';
+                        medalText = '2nd';
+                        break;
+                    case 2:
+                        medalColor = 'bg-blue-300';
+                        medalText = '3rd';
+                        break;
+                }
+                
+                const div = document.createElement('div');
+                div.className = 'bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-all duration-300 mb-4';
+                
+                // Use creation_date from API if available
+                const creationDate = campaign.creation_date ? 
+                    `<div class="text-xs text-gray-500 mt-1">Created ${new Date(campaign.creation_date).toLocaleDateString()}</div>` : '';
+                
+                // Use status from API if available
+                let statusBadge = '';
+                if (campaign.status) {
+                    const statusColors = {
+                        'active': { bg: 'bg-green-100', text: 'text-green-800', label: 'Active' },
+                        'completed': { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Completed' },
+                        'paused': { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Paused' },
+                        'draft': { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Draft' }
+                    };
+                    const statusInfo = statusColors[campaign.status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: campaign.status };
+                    statusBadge = `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusInfo.bg} ${statusInfo.text}">
+                        ${statusInfo.label}
+                    </span>`;
+                }
+                
+                div.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <div class="h-8 w-8 ${medalColor} rounded-full flex items-center justify-center text-white font-bold text-xs mr-3">
+                                ${medalText}
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">${campaign.campaign_id}${statusBadge}</h3>
+                                ${creationDate}
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                            ${emailsSent}
+                        </span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600 mb-2">
+                        <span>${campaign.opened || 0} opened</span>
+                        <span>${campaign.total_replies || 0} replies</span>
+                    </div>
+                    <div class="relative pt-1">
+                        <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                            <div class="bg-blue-500 rounded-r" style="width:0%"></div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(div);
+                
+                // Animate progress bar
+                setTimeout(() => {
+                    const progressBar = div.querySelector('.bg-blue-500');
+                    progressBar.style.transition = 'width 1s ease-in-out';
+                    progressBar.style.width = percentage + '%';
+                }, 100 * index);
+            });
+        }
+        
+        // Export to CSV
+        function exportToCSV() {
+            const campaigns = window.analyticsData?.campaign_breakdown || [];
+            if (campaigns.length === 0) {
+                showAlert('No data to export.');
+                return;
+            }
+            
+            // Get filter value
+            const filter = document.getElementById('campaignFilter').value;
+            let filteredCampaigns = campaigns;
+            if (filter !== 'all') {
+                filteredCampaigns = campaigns.filter(campaign => campaign.status === filter);
+            }
+            
+            // Create CSV content
+            const headers = ['Campaign ID', 'Status', 'Creation Date', 'Emails Sent', 'Opened', 'Replied', 'Reply Rate'];
+            let csvContent = headers.join(',') + '\n';
+            
+            filteredCampaigns.forEach(campaign => {
+                const row = [
+                    `"${campaign.campaign_id}"`,
+                    `"${campaign.status || ''}"`,
+                    `"${campaign.creation_date ? new Date(campaign.creation_date).toLocaleDateString() : ''}"`,
+                    campaign.initial_emails_sent || 0,
+                    campaign.opened || 0,
+                    campaign.total_replies || 0,
+                    `${campaign.reply_rate || 0}%`
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            
+            // Create download link
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `campaign_analytics_${filter}_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

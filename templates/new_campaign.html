@@ -1,0 +1,2019 @@
+{% extends "new_layout.html" %}
+
+{% block title %}Start New Campaign - UndrApp Intel{% endblock %}
+
+{% block head %}
+<style>
+    .step {
+        display: none;
+    }
+    .step.active {
+        display: block;
+    }
+    .step-indicator {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: #e5e7eb;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .step-indicator.active {
+        background-color: #3b82f6;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+    }
+    .step-indicator.completed {
+        background-color: #10b981;
+        color: white;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+    }
+    .step-connector {
+        height: 3px;
+        transition: background-color 0.3s ease;
+    }
+    .step-connector.active {
+        background-color: #10b981;
+    }
+    .step-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #6b7280;
+        transition: color 0.3s ease;
+    }
+    .step-label.active {
+        color: #3b82f6;
+        font-weight: 600;
+    }
+    .step-label.completed {
+        color: #10b981;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Start New Campaign</h1>
+    <p class="text-gray-600">Follow the steps to create and launch your campaign</p>
+</div>
+
+<!-- Progress Indicator -->
+<div class="mb-8">
+    <div class="flex items-center justify-between max-w-3xl mx-auto">
+        <!-- Step 1: Upload -->
+        <div class="flex flex-col items-center">
+            <div id="step-indicator-1" class="step-indicator active">1</div>
+            <span class="text-sm mt-2">Upload</span>
+        </div>
+        
+        <!-- Connector -->
+        <div class="flex-1 h-1 bg-gray-200 mx-2" id="connector-1-2"></div>
+        
+        <!-- Step 2: Extract -->
+        <div class="flex flex-col items-center">
+            <div id="step-indicator-2" class="step-indicator">2</div>
+            <span class="text-sm mt-2">Extract</span>
+        </div>
+        
+        <!-- Connector -->
+        <div class="flex-1 h-1 bg-gray-200 mx-2" id="connector-2-3"></div>
+        
+        <!-- Step 3: Select Keys -->
+        <div class="flex flex-col items-center">
+            <div id="step-indicator-3" class="step-indicator">3</div>
+            <span class="text-sm mt-2">Select Keys</span>
+        </div>
+        
+        <!-- Connector -->
+        <div class="flex-1 h-1 bg-gray-200 mx-2" id="connector-3-4"></div>
+        
+        <!-- Step 4: View Apps -->
+        <div class="flex flex-col items-center">
+            <div id="step-indicator-4" class="step-indicator">4</div>
+            <span class="text-sm mt-2">View Apps</span>
+        </div>
+        
+        <!-- Connector -->
+        <div class="flex-1 h-1 bg-gray-200 mx-2" id="connector-4-5"></div>
+        
+        <!-- Step 5: Generate Emails -->
+        <div class="flex flex-col items-center">
+            <div id="step-indicator-5" class="step-indicator">5</div>
+            <span class="text-sm mt-2">Generate</span>
+        </div>
+        
+        <!-- Connector -->
+        <div class="flex-1 h-1 bg-gray-200 mx-2" id="connector-5-6"></div>
+        
+        <!-- Step 6: Send Emails -->
+        <div class="flex flex-col items-center">
+            <div id="step-indicator-6" class="step-indicator">6</div>
+            <span class="text-sm mt-2">Send</span>
+        </div>
+    </div>
+</div>
+
+<!-- Step Content -->
+<div class="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-6 mb-8">
+    <!-- Step 1: Upload JSON File -->
+    <div id="step-1" class="step active">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            Upload Campaign Data
+        </h2>
+        <p class="text-gray-600 mb-6">Start by naming your campaign and uploading your JSON data file.</p>
+        
+        <form id="upload-form" enctype="multipart/form-data" class="space-y-6">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <label for="campaign-name" class="label flex items-center mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Campaign Name
+                    <span class="text-red-500 ml-1">*</span>
+                </label>
+                <input type="text" id="campaign-name" name="campaign_id" class="input-field" placeholder="Enter a descriptive name for your campaign" required>
+                <p class="text-xs text-gray-500 mt-1">This name will help you identify your campaign in the dashboard.</p>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                <label for="json-file" class="label flex items-center mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    JSON File
+                    <span class="text-red-500 ml-1">*</span>
+                </label>
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors cursor-pointer">
+                    <input type="file" id="json-file" name="file" accept=".json" class="hidden" required>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p class="mt-2 text-sm text-gray-600" id="file-name-display">Drag and drop your JSON file here, or click to browse</p>
+                    <p class="mt-1 text-xs text-gray-500">Supported format: .json</p>
+                </div>
+            </div>
+            
+            <div class="flex justify-between items-center pt-4">
+                <a href="/" class="btn-secondary flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Cancel
+                </a>
+                <button type="submit" class="btn-primary flex items-center">
+                    Upload & Continue
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </form>
+        
+        <!-- Upload Loader -->
+        <div id="upload-loader" class="hidden mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <div class="flex items-center">
+                <svg class="animate-spin mr-3 h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <div>
+                    <p class="font-medium text-primary">Uploading and processing data...</p>
+                    <p class="text-sm text-gray-600">This may take a few moments depending on the file size.</p>
+                </div>
+            </div>
+            <div class="mt-3 w-full bg-gray-200 rounded-full h-2.5">
+                <div class="bg-primary h-2.5 rounded-full w-0 transition-all duration-300" id="upload-progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <!-- Upload Result -->
+        <div id="upload-result" class="hidden mt-6 p-4 rounded-lg border"></div>
+    </div>
+    
+    <!-- Step 2: Extract Emails -->
+    <div id="step-2" class="step">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            Extract Contacts
+        </h2>
+        <p class="text-gray-600 mb-6">We're analyzing your data to find and extract email contacts from each app.</p>
+        
+        <!-- Extract Loader -->
+        <div id="extract-loader" class="bg-blue-50 rounded-lg border border-blue-100 p-6 mb-6">
+            <div class="flex items-center mb-4">
+                <div class="relative">
+                    <svg class="animate-spin mr-4 h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <div class="absolute top-0 left-0 w-8 h-8 flex items-center justify-center">
+                        <span class="text-xs font-medium text-white" id="extract-percentage">0%</span>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-medium text-primary text-lg">Extracting Email Contacts</h3>
+                    <p class="text-sm text-gray-600" id="extract-status">Analyzing apps and finding contact information...</p>
+                </div>
+            </div>
+            
+            <div class="space-y-2">
+                <div class="flex justify-between text-sm text-gray-600">
+                    <span>Progress</span>
+                    <span id="extract-progress-text">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="bg-primary h-2.5 rounded-full transition-all duration-300" id="extract-progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Extract Result -->
+        <div id="extract-result" class="hidden mb-6 p-4 rounded-lg border"></div>
+        
+        <div class="flex justify-between items-center">
+            <button id="back-to-step-1" class="btn-secondary flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Back
+            </button>
+            <button id="continue-to-step-3" class="btn-primary hidden flex items-center">
+                Continue
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 3: Select Keys -->
+    <div id="step-3" class="step">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+            </svg>
+            Select Data Keys
+        </h2>
+        <p class="text-gray-600 mb-6">Choose which data fields to include in your email generation. These keys will be used to personalize your emails.</p>
+        
+        <!-- Keys Loader -->
+        <div id="keys-loader" class="bg-blue-50 rounded-lg border border-blue-100 p-6 mb-6">
+            <div class="flex items-center justify-center">
+                <svg class="animate-spin mr-4 h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <div>
+                    <h3 class="font-medium text-primary text-lg">Analyzing Data Structure</h3>
+                    <p class="text-sm text-gray-600">Finding common data fields across all apps...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Keys Selection -->
+        <div id="keys-selection" class="hidden mb-6">
+            <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-4 bg-gray-50 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-medium text-gray-700">Available Data Fields</h3>
+                        <div class="flex space-x-3">
+                            <button id="select-all-keys" class="text-sm text-primary hover:text-primary-dark flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Select All
+                            </button>
+                            <button id="deselect-all-keys" class="text-sm text-gray-500 hover:text-gray-700 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Deselect All
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-1">Select the data fields you want to include in your email templates.</p>
+                </div>
+                <div class="p-4">
+                    <div id="keys-checkboxes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-80 overflow-y-auto">
+                        <!-- Keys will be populated here -->
+                    </div>
+                </div>
+                <div class="p-3 bg-gray-50 border-t border-gray-200 text-sm text-gray-500">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Selected fields will be available as variables in your email templates.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex justify-between items-center">
+            <button id="back-to-step-2" class="btn-secondary flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Back
+            </button>
+            <button id="continue-to-step-4" class="btn-primary flex items-center">
+                Continue
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 4: View Apps -->
+    <div id="step-4" class="step">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+            </svg>
+            Review Apps
+        </h2>
+        <p class="text-gray-600 mb-6">Select the apps you want to include in your email campaign. Only apps with valid contact information will be shown.</p>
+        
+        <!-- Apps Loader -->
+        <div id="apps-loader" class="bg-blue-50 rounded-lg border border-blue-100 p-6 mb-6">
+            <div class="flex items-center">
+                <svg class="animate-spin mr-4 h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <div>
+                    <h3 class="font-medium text-primary text-lg">Loading Apps</h3>
+                    <p class="text-sm text-gray-600">Retrieving app data and contact information...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Apps Table -->
+        <div id="apps-table-container" class="hidden mb-6">
+            <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-4 bg-gray-50 border-b border-gray-200">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            <span class="font-medium">Found <span id="apps-count" class="text-primary font-semibold">0</span> apps with contacts</span>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button id="select-all-apps" class="text-sm text-primary hover:text-primary-dark flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Select All
+                            </button>
+                            <button id="deselect-all-apps" class="text-sm text-gray-500 hover:text-gray-700 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Deselect All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <input type="checkbox" id="select-all-checkbox" class="rounded text-primary focus:ring-primary focus:ring-offset-0 h-4 w-4">
+                                </th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Index</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">App Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contacts</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="apps-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Apps will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                    <div class="text-sm text-gray-700">
+                        <span>Page <span id="current-page" class="font-medium">1</span> of <span id="total-pages" class="font-medium">1</span></span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="prev-page" class="px-3 py-1 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm">
+                            <span class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                Previous
+                            </span>
+                        </button>
+                        <button id="next-page" class="px-3 py-1 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm">
+                            <span class="flex items-center">
+                                Next
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Preview Section -->
+        <div class="mb-6">
+            <button id="generate-preview" class="btn-primary w-full py-3 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Generate Email Preview for Selected Apps
+            </button>
+            
+            <!-- Preview Loader -->
+            <div id="preview-loader" class="hidden mt-6 bg-blue-50 rounded-lg border border-blue-100 p-6">
+                <div class="flex items-center">
+                    <svg class="animate-spin mr-4 h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="font-medium text-primary text-lg">Generating Email Previews</h3>
+                        <p class="text-sm text-gray-600">Creating personalized email templates for selected apps...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Preview Results -->
+            <div id="preview-results" class="hidden mt-6 space-y-4">
+                <!-- Previews will be populated here -->
+            </div>
+        </div>
+        
+        <div class="flex justify-between items-center">
+            <button id="back-to-step-3" class="btn-secondary flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Back
+            </button>
+            <button id="continue-to-step-5" class="btn-primary flex items-center">
+                Continue to Generate All Emails
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 5: Generate Final Emails -->
+    <div id="step-5" class="step">
+        <h2 class="text-xl font-bold mb-4">Generate Final Emails</h2>
+        <p class="mb-4">Configure email generation settings:</p>
+        
+        <form id="generate-emails-form" class="mb-6">
+            <div class="mb-4">
+                <label for="email-tone" class="label">Email Tone</label>
+                <select id="email-tone" name="tone" class="input-field">
+                    <option value="conversational">Conversational</option>
+                    <option value="professional">Professional</option>
+                    <option value="friendly">Friendly</option>
+                    <option value="direct">Direct</option>
+                    <option value="persuasive">Persuasive</option>
+                </select>
+            </div>
+            
+            <div class="mb-4">
+                <label for="num-followups" class="label">Number of Follow-ups</label>
+                <input type="number" id="num-followups" name="num_followups" class="input-field" min="1" max="5" value="3" required>
+            </div>
+            
+            <div class="mb-4">
+                <label for="email-limit" class="label">Limit (Optional)</label>
+                <input type="number" id="email-limit" name="limit" class="input-field" min="1" placeholder="Leave empty for no limit">
+                <p class="text-sm text-gray-500 mt-1">Limit the number of emails to generate. Leave empty to generate for all apps with contacts.</p>
+            </div>
+            
+            <div class="flex justify-between items-center">
+                <button id="back-to-step-4" class="btn-secondary">Back</button>
+                <button type="submit" class="btn-primary">Generate Emails</button>
+            </div>
+        </form>
+        
+        <!-- Generation Loader -->
+        <div id="generation-loader" class="hidden mb-4">
+            <div class="flex items-center justify-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Starting email generation in background...</span>
+            </div>
+        </div>
+        
+        <!-- Generation Result -->
+        <div id="generation-result" class="hidden mb-4 p-4 rounded-md"></div>
+    </div>
+    
+    <!-- Step 6: Send Emails -->
+    <div id="step-6" class="step">
+        <h2 class="text-xl font-bold mb-4">Send Emails</h2>
+        <p class="mb-4">Configure email sending settings:</p>
+        
+        <form id="send-emails-form" class="mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="followup-delay-hours" class="label">Follow-up Delay (Hours)</label>
+                    <input type="number" id="followup-delay-hours" name="followup_delay_hours" class="input-field" min="0" value="24">
+                </div>
+                
+                <div>
+                    <label for="followup-delay-minutes" class="label">Follow-up Delay (Minutes)</label>
+                    <input type="number" id="followup-delay-minutes" name="followup_delay_minutes" class="input-field" min="0" max="59" value="0">
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label for="max-followups" class="label">Max Follow-ups</label>
+                <input type="number" id="max-followups" name="max_followups" class="input-field" readonly>
+                <p class="text-sm text-gray-500 mt-1">This value is set based on your email generation configuration.</p>
+            </div>
+            
+            <div class="mb-4">
+                <div class="flex items-center">
+                    <input type="checkbox" id="test-mode" name="test_mode" class="rounded text-primary focus:ring-primary" checked>
+                    <label for="test-mode" class="ml-2 text-sm font-medium text-gray-700">Test Mode</label>
+                </div>
+                <p class="text-sm text-gray-500 mt-1">When enabled, all emails will be sent to the test email address instead of actual contacts.</p>
+            </div>
+            
+            <div id="test-email-container" class="mb-4">
+                <label for="test-email" class="label">Test Email Address</label>
+                <input type="email" id="test-email" name="test_email" class="input-field" value="{{ test_email }}">
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="sender-name" class="label">Sender Name</label>
+                    <input type="text" id="sender-name" name="sender_name" class="input-field" value="The UndrAds Team" required>
+                </div>
+                
+                <div>
+                    <label for="sender-company" class="label">Sender Company</label>
+                    <input type="text" id="sender-company" name="sender_company" class="input-field" value="UndrAds" required>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label for="send-limit" class="label">Limit (Optional)</label>
+                <input type="number" id="send-limit" name="limit" class="input-field" min="1" placeholder="Leave empty for no limit">
+                <p class="text-sm text-gray-500 mt-1">Limit the number of emails to send. Leave empty to send to all apps with contacts.</p>
+            </div>
+            
+            <div class="flex justify-between items-center">
+                <button id="back-to-step-5" class="btn-secondary">Back</button>
+                <button type="submit" class="btn-primary">Start Sending Emails</button>
+            </div>
+        </form>
+        
+        <!-- Sending Loader -->
+        <div id="sending-loader" class="hidden mb-4">
+            <div class="flex items-center justify-center">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Starting email sending in background...</span>
+            </div>
+        </div>
+        
+        <!-- Sending Result -->
+        <div id="sending-result" class="hidden mb-4 p-4 rounded-md"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Campaign data storage
+    const campaignData = {
+        campaign_id: null,
+        selected_keys: [],
+        selected_app_indices: [],
+        num_followups: 3
+    };
+    
+    // Pagination variables
+    let currentPage = 1;
+    let appsPerPage = 10;
+    let allApps = [];
+    
+    // File upload elements
+    const jsonFileInput = document.getElementById('json-file');
+    const fileNameDisplay = document.getElementById('file-name-display');
+    const fileDropArea = jsonFileInput.parentElement;
+    
+    // Set up drag and drop for file upload
+    fileDropArea.addEventListener('click', () => {
+        jsonFileInput.click();
+    });
+    
+    jsonFileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            updateFileDisplay(e.target.files[0]);
+        }
+    });
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileDropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        fileDropArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        fileDropArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+        fileDropArea.classList.add('border-primary', 'bg-blue-50');
+        fileDropArea.classList.remove('border-gray-300');
+    }
+    
+    function unhighlight() {
+        fileDropArea.classList.remove('border-primary', 'bg-blue-50');
+        fileDropArea.classList.add('border-gray-300');
+    }
+    
+    fileDropArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length > 0) {
+            jsonFileInput.files = files;
+            updateFileDisplay(files[0]);
+        }
+    }
+    
+    function updateFileDisplay(file) {
+        if (file.type === 'application/json' || file.name.endsWith('.json')) {
+            fileNameDisplay.textContent = file.name;
+            fileNameDisplay.classList.add('text-primary', 'font-medium');
+            fileDropArea.classList.add('border-primary', 'bg-blue-50');
+            fileDropArea.classList.remove('border-gray-300');
+        } else {
+            fileNameDisplay.textContent = 'Invalid file type. Please select a JSON file.';
+            fileNameDisplay.classList.add('text-red-500');
+        }
+    }
+    
+    // Step navigation functions
+    function goToStep(stepNumber) {
+        // Hide all steps
+        document.querySelectorAll('.step').forEach(step => {
+            step.classList.remove('active');
+        });
+        
+        // Show the target step
+        document.getElementById(`step-${stepNumber}`).classList.add('active');
+        
+        // Update step indicators
+        for (let i = 1; i <= 6; i++) {
+            const indicator = document.getElementById(`step-indicator-${i}`);
+            if (i < stepNumber) {
+                indicator.classList.remove('active');
+                indicator.classList.add('completed');
+            } else if (i === stepNumber) {
+                indicator.classList.add('active');
+                indicator.classList.remove('completed');
+            } else {
+                indicator.classList.remove('active', 'completed');
+            }
+            
+            // Update connectors
+            if (i < 6) {
+                const connector = document.getElementById(`connector-${i}-${i+1}`);
+                if (i < stepNumber) {
+                    connector.classList.add('bg-primary');
+                    connector.classList.remove('bg-gray-200');
+                } else {
+                    connector.classList.remove('bg-primary');
+                    connector.classList.add('bg-gray-200');
+                }
+            }
+        }
+    }
+    
+    // Step 1: Upload JSON File
+    document.getElementById('upload-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const campaignName = document.getElementById('campaign-name').value;
+        campaignData.campaign_id = campaignName;
+        
+        // Show loader
+        document.getElementById('upload-loader').classList.remove('hidden');
+        
+        // Call the upload API
+        fetch('/campaign/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loader
+            document.getElementById('upload-loader').classList.add('hidden');
+            
+            if (data.error) {
+                // Show error
+                const resultDiv = document.getElementById('upload-result');
+                resultDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800');
+                resultDiv.classList.add('bg-red-100', 'text-red-800');
+                resultDiv.textContent = `Error: ${data.error}`;
+            } else {
+                // Show success and proceed to next step
+                const resultDiv = document.getElementById('upload-result');
+                resultDiv.classList.remove('hidden', 'bg-red-100', 'text-red-800');
+                resultDiv.classList.add('bg-green-100', 'text-green-800');
+                resultDiv.textContent = `Success! Extracted ${data.total_apps} apps. Proceeding to extract contacts...`;
+                
+                // Wait a moment before proceeding
+                setTimeout(() => {
+                    goToStep(2);
+                    extractContacts();
+                }, 1500);
+            }
+        })
+        .catch(error => {
+            // Hide loader
+            document.getElementById('upload-loader').classList.add('hidden');
+            
+            // Show error
+            const resultDiv = document.getElementById('upload-result');
+            resultDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800');
+            resultDiv.classList.add('bg-red-100', 'text-red-800');
+            resultDiv.textContent = `Error: ${error.message}`;
+        });
+    });
+    
+    // Step 2: Extract Contacts
+    function extractContacts() {
+        // Show loader and reset progress indicators
+        document.getElementById('extract-loader').classList.remove('hidden');
+        document.getElementById('extract-result').classList.add('hidden');
+        document.getElementById('extract-progress-bar').style.width = '0%';
+        document.getElementById('extract-progress-text').textContent = '0%';
+        document.getElementById('extract-percentage').textContent = '0%';
+        document.getElementById('extract-status').textContent = 'Analyzing apps and finding contact information...';
+        
+        // Simulate progress updates (in a real app, this would come from server events)
+        let progress = 0;
+        const progressInterval = setInterval(function() {
+            if (progress < 90) { // Only go up to 90% for simulation
+                progress += Math.floor(Math.random() * 10) + 1;
+                progress = Math.min(progress, 90);
+                updateExtractProgress(progress);
+            }
+        }, 800);
+        
+        // Call the extract contacts API
+        fetch('/campaign/extract-contacts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                campaign_id: campaignData.campaign_id
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Clear the progress interval and complete the progress bar
+            clearInterval(progressInterval);
+            updateExtractProgress(100);
+            
+            setTimeout(() => {
+                // Hide loader
+                document.getElementById('extract-loader').classList.add('hidden');
+                
+                const resultDiv = document.getElementById('extract-result');
+                
+                if (data.error) {
+                    // Show error
+                    resultDiv.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'border-green-200');
+                    resultDiv.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
+                    resultDiv.innerHTML = `
+                        <div class="flex items-center">
+                            <svg class="h-6 w-6 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                                <h3 class="font-medium text-red-700">Extraction Failed</h3>
+                                <p>Error: ${data.error}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Show success
+                    resultDiv.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'border-red-200');
+                    resultDiv.classList.add('bg-green-50', 'text-green-700', 'border-green-200');
+                    resultDiv.innerHTML = `
+                        <div class="flex items-center">
+                            <svg class="h-6 w-6 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                                <h3 class="font-medium text-green-700">Extraction Complete</h3>
+                                <p>Successfully found <span class="font-semibold">${data.apps_with_contacts}</span> apps with contacts.</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Show continue button
+                    document.getElementById('continue-to-step-3').classList.remove('hidden');
+                    
+                    // Automatically fetch common keys
+                    fetchCommonKeys();
+                }
+            }, 500);
+        })
+        .catch(error => {
+            // Clear the progress interval
+            clearInterval(progressInterval);
+            
+            // Hide loader
+            document.getElementById('extract-loader').classList.add('hidden');
+            
+            // Show error
+            const resultDiv = document.getElementById('extract-result');
+            resultDiv.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'border-green-200');
+            resultDiv.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
+            resultDiv.innerHTML = `
+                <div class="flex items-center">
+                    <svg class="h-6 w-6 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <h3 class="font-medium text-red-700">Extraction Failed</h3>
+                        <p>An error occurred while extracting contacts. Please try again.</p>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    // Update extract progress indicators
+    function updateExtractProgress(percentage) {
+        document.getElementById('extract-progress-bar').style.width = percentage + '%';
+        document.getElementById('extract-progress-text').textContent = percentage + '%';
+        document.getElementById('extract-percentage').textContent = percentage + '%';
+        
+        if (percentage < 30) {
+            document.getElementById('extract-status').textContent = 'Analyzing apps and finding contact information...';
+        } else if (percentage < 60) {
+            document.getElementById('extract-status').textContent = 'Processing contact data...';
+        } else if (percentage < 90) {
+            document.getElementById('extract-status').textContent = 'Finalizing extraction...';
+        } else {
+            document.getElementById('extract-status').textContent = 'Extraction complete!';
+        }
+    }
+    
+    // Back to Step 1
+    document.getElementById('back-to-step-1').addEventListener('click', function() {
+        goToStep(1);
+    });
+    
+    // Continue to Step 3
+    document.getElementById('continue-to-step-3').addEventListener('click', function() {
+        goToStep(3);
+    });
+    
+    // Step 3: Select Keys
+    function fetchCommonKeys() {
+        // Call the common keys API
+        fetch(`/campaign/${campaignData.campaign_id}/common-keys`)
+        .then(response => response.json())
+        .then(data => {
+            // Hide loader
+            document.getElementById('keys-loader').classList.add('hidden');
+            
+            if (data.error) {
+                // Show error
+                showAlert(`Error: ${data.error}`, 'error');
+            } else {
+                // Show keys selection
+                document.getElementById('keys-selection').classList.remove('hidden');
+                
+                // Populate keys checkboxes
+                const keysContainer = document.getElementById('keys-checkboxes');
+                keysContainer.innerHTML = '';
+                
+                // Sort keys by percentage (descending)
+                const sortedKeys = [...data.common_keys].sort((a, b) => b.percentage - a.percentage);
+                
+                sortedKeys.forEach(keyData => {
+                    const keyDiv = document.createElement('div');
+                    keyDiv.className = 'bg-white border border-gray-200 rounded-md p-3 hover:shadow-sm transition-shadow';
+                    
+                    const checkboxContainer = document.createElement('div');
+                    checkboxContainer.className = 'flex items-center';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `key-${keyData.key}`;
+                    checkbox.value = keyData.key;
+                    checkbox.className = 'key-checkbox rounded text-primary focus:ring-primary focus:ring-offset-0 h-4 w-4';
+                    checkbox.checked = true; // Default: all selected
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `key-${keyData.key}`;
+                    label.className = 'ml-2 text-sm font-medium text-gray-700 flex-grow';
+                    label.textContent = keyData.key;
+                    
+                    // Create percentage badge
+                    const percentageBadge = document.createElement('span');
+                    percentageBadge.className = getPercentageClass(keyData.percentage);
+                    percentageBadge.textContent = `${keyData.percentage}%`;
+                    
+                    checkboxContainer.appendChild(checkbox);
+                    checkboxContainer.appendChild(label);
+                    checkboxContainer.appendChild(percentageBadge);
+                    
+                    // Add description if available (in a real app, this might come from the API)
+                    const description = document.createElement('div');
+                    description.className = 'mt-1 text-xs text-gray-500';
+                    description.textContent = getKeyDescription(keyData.key);
+                    
+                    keyDiv.appendChild(checkboxContainer);
+                    keyDiv.appendChild(description);
+                    keysContainer.appendChild(keyDiv);
+                    
+                    // Add event listener to update selected keys when checkbox changes
+                    checkbox.addEventListener('change', updateSelectedKeys);
+                });
+                
+                // Add all selected keys to campaignData
+                updateSelectedKeys();
+            }
+        })
+        .catch(error => {
+            // Hide loader
+            document.getElementById('keys-loader').classList.add('hidden');
+            
+            // Show error
+            showAlert(`Error: ${error.message}`, 'error');
+        });
+    }
+    
+    // Helper function to get percentage badge class based on percentage value
+    function getPercentageClass(percentage) {
+        let baseClass = 'text-xs font-medium px-2 py-0.5 rounded-full';
+        if (percentage >= 90) {
+            return `${baseClass} bg-green-100 text-green-800`;
+        } else if (percentage >= 70) {
+            return `${baseClass} bg-blue-100 text-blue-800`;
+        } else if (percentage >= 40) {
+            return `${baseClass} bg-yellow-100 text-yellow-800`;
+        } else {
+            return `${baseClass} bg-gray-100 text-gray-800`;
+        }
+    }
+    
+    // Helper function to get key description (in a real app, this might come from the API)
+    function getKeyDescription(key) {
+        const descriptions = {
+            'name': 'The name of the app or contact',
+            'email': 'Email address for contact',
+            'phone': 'Phone number for contact',
+            'company': 'Company or organization name',
+            'position': 'Job title or position',
+            'website': 'Website URL',
+            'address': 'Physical address',
+            'industry': 'Industry or sector',
+            'description': 'Description of the app or service'
+        };
+        
+        return descriptions[key] || `Data field for ${key}`;
+    }
+    
+    // Update selected keys
+    function updateSelectedKeys() {
+        campaignData.selected_keys = Array.from(document.querySelectorAll('.key-checkbox:checked')).map(cb => cb.value);
+    }
+    
+    // Select All Keys
+    document.getElementById('select-all-keys').addEventListener('click', function() {
+        document.querySelectorAll('.key-checkbox').forEach(cb => {
+            cb.checked = true;
+        });
+        updateSelectedKeys();
+    });
+    
+    // Deselect All Keys
+    document.getElementById('deselect-all-keys').addEventListener('click', function() {
+        document.querySelectorAll('.key-checkbox').forEach(cb => {
+            cb.checked = false;
+        });
+        updateSelectedKeys();
+    });
+    
+    // Back to Step 2
+    document.getElementById('back-to-step-2').addEventListener('click', function() {
+        goToStep(2);
+    });
+    
+    // Continue to Step 4
+    document.getElementById('continue-to-step-4').addEventListener('click', function() {
+        updateSelectedKeys();
+        goToStep(4);
+        fetchApps();
+    });
+    
+    // Step 4: View Apps
+    function fetchApps() {
+        // Show loader
+        document.getElementById('apps-loader').classList.remove('hidden');
+        document.getElementById('apps-table-container').classList.add('hidden');
+        
+        // Call the apps API
+        fetch(`/campaign/${campaignData.campaign_id}/apps`)
+        .then(response => response.json())
+        .then(data => {
+            // Hide loader
+            document.getElementById('apps-loader').classList.add('hidden');
+            
+            if (data.error) {
+                // Show error
+                showAlert(`Error: ${data.error}`, 'error');
+            } else {
+                // Filter apps with contacts
+                allApps = data.apps.filter(app => app.has_contacts);
+                
+                // Sort apps by number of contacts (descending)
+                allApps.sort((a, b) => b.extracted_emails.length - a.extracted_emails.length);
+                
+                // Show apps table
+                document.getElementById('apps-table-container').classList.remove('hidden');
+                document.getElementById('apps-count').textContent = allApps.length;
+                
+                // Update pagination
+                updatePagination();
+                
+                // Display first page
+                displayAppsPage(1);
+                
+                // Show a success message
+                if (allApps.length > 0) {
+                    showAlert(`Successfully loaded ${allApps.length} apps with contact information.`, 'success');
+                } else {
+                    showAlert('No apps with contact information found. Please go back and check your data.', 'warning');
+                }
+            }
+        })
+        .catch(error => {
+            // Hide loader
+            document.getElementById('apps-loader').classList.add('hidden');
+            
+            // Show error
+            showAlert(`Error: ${error.message}`, 'error');
+        });
+    }
+    
+    
+    // Update pagination
+    function updatePagination() {
+        const totalPages = Math.ceil(allApps.length / appsPerPage);
+        document.getElementById('total-pages').textContent = totalPages;
+        document.getElementById('current-page').textContent = currentPage;
+        
+        // Update pagination buttons
+        document.getElementById('prev-page').disabled = currentPage === 1;
+        document.getElementById('next-page').disabled = currentPage === totalPages;
+    }
+    
+    // Display apps page
+    function displayAppsPage(page) {
+        currentPage = page;
+        const startIndex = (page - 1) * appsPerPage;
+        const endIndex = Math.min(startIndex + appsPerPage, allApps.length);
+        const pageApps = allApps.slice(startIndex, endIndex);
+        
+        // Update table
+        const tableBody = document.getElementById('apps-table-body');
+        tableBody.innerHTML = '';
+        
+        pageApps.forEach(app => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50 transition-colors';
+            
+            // Checkbox cell
+            const checkboxCell = document.createElement('td');
+            checkboxCell.className = 'px-4 py-3 whitespace-nowrap';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'app-checkbox rounded text-primary focus:ring-primary focus:ring-offset-0 h-4 w-4';
+            checkbox.dataset.appIndex = app.app_index;
+            checkbox.addEventListener('change', updateSelectedApps);
+            checkboxCell.appendChild(checkbox);
+            
+            // Index cell
+            const indexCell = document.createElement('td');
+            indexCell.className = 'px-4 py-3 whitespace-nowrap text-sm text-gray-500';
+            indexCell.textContent = app.app_index;
+            
+            // App name cell
+            const nameCell = document.createElement('td');
+            nameCell.className = 'px-4 py-3 whitespace-nowrap';
+            
+            const nameWrapper = document.createElement('div');
+            nameWrapper.className = 'flex items-center';
+            
+            const appIcon = document.createElement('div');
+            appIcon.className = 'flex-shrink-0 h-8 w-8 rounded-full bg-primary-light text-primary flex items-center justify-center mr-3';
+            appIcon.innerHTML = `<span class="text-sm font-medium">${app.app_name.charAt(0).toUpperCase()}</span>`;
+            
+            const nameTextWrapper = document.createElement('div');
+            
+            const appName = document.createElement('div');
+            appName.className = 'text-sm font-medium text-gray-900';
+            appName.textContent = app.app_name;
+            
+            nameTextWrapper.appendChild(appName);
+            
+            // Add app description if available
+            if (app.description) {
+                const appDescription = document.createElement('div');
+                appDescription.className = 'text-xs text-gray-500';
+                appDescription.textContent = app.description;
+                nameTextWrapper.appendChild(appDescription);
+            }
+            
+            nameWrapper.appendChild(appIcon);
+            nameWrapper.appendChild(nameTextWrapper);
+            nameCell.appendChild(nameWrapper);
+            
+            // Contacts cell
+            const contactsCell = document.createElement('td');
+            contactsCell.className = 'px-4 py-3 whitespace-nowrap';
+            
+            const contactBadge = document.createElement('span');
+            contactBadge.className = getContactBadgeClass(app.extracted_emails.length);
+            contactBadge.textContent = app.extracted_emails.length;
+            
+            contactsCell.appendChild(contactBadge);
+            
+            // Actions cell
+            const actionsCell = document.createElement('td');
+            actionsCell.className = 'px-4 py-3 whitespace-nowrap text-sm text-gray-500';
+            
+            const actionButtons = document.createElement('div');
+            actionButtons.className = 'flex space-x-2';
+            
+            const viewButton = document.createElement('button');
+            viewButton.className = 'text-blue-600 hover:text-blue-800 flex items-center';
+            viewButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                View
+            `;
+            
+            viewButton.addEventListener('click', () => {
+                // Create a modal for app details
+                showAppDetailsModal(app);
+            });
+            
+            actionButtons.appendChild(viewButton);
+            actionsCell.appendChild(actionButtons);
+            
+            // Append cells to row
+            row.appendChild(checkboxCell);
+            row.appendChild(indexCell);
+            row.appendChild(nameCell);
+            row.appendChild(contactsCell);
+            row.appendChild(actionsCell);
+            
+            // Append row to table
+            tableBody.appendChild(row);
+        });
+        
+        // Update pagination
+        updatePagination();
+    }
+    
+    // Helper function to get contact badge class based on count
+    function getContactBadgeClass(count) {
+        let baseClass = 'px-2 py-1 inline-flex text-xs font-medium rounded-full';
+        if (count >= 10) {
+            return `${baseClass} bg-green-100 text-green-800`;
+        } else if (count >= 5) {
+            return `${baseClass} bg-blue-100 text-blue-800`;
+        } else if (count >= 2) {
+            return `${baseClass} bg-yellow-100 text-yellow-800`;
+        } else {
+            return `${baseClass} bg-gray-100 text-gray-800`;
+        }
+    }
+    
+    // Function to show app details modal
+    function showAppDetailsModal(app) {
+        // Create modal backdrop
+        const backdrop = document.createElement('div');
+        backdrop.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+        backdrop.id = 'app-details-modal-backdrop';
+        
+        // Create modal content
+        const modal = document.createElement('div');
+        modal.className = 'bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col';
+        
+        // Modal header
+        const header = document.createElement('div');
+        header.className = 'px-6 py-4 border-b border-gray-200 flex justify-between items-center';
+        
+        const title = document.createElement('h3');
+        title.className = 'text-lg font-medium text-gray-900';
+        title.textContent = app.app_name;
+        
+        const closeButton = document.createElement('button');
+        closeButton.className = 'text-gray-400 hover:text-gray-500';
+        closeButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        `;
+        closeButton.addEventListener('click', () => {
+            document.body.removeChild(backdrop);
+        });
+        
+        header.appendChild(title);
+        header.appendChild(closeButton);
+        
+        // Modal body
+        const body = document.createElement('div');
+        body.className = 'px-6 py-4 overflow-y-auto flex-grow';
+        
+        // App info section
+        const appInfo = document.createElement('div');
+        appInfo.className = 'mb-6';
+        
+        const appInfoTitle = document.createElement('h4');
+        appInfoTitle.className = 'text-sm font-medium text-gray-500 uppercase tracking-wider mb-3';
+        appInfoTitle.textContent = 'App Information';
+        
+        const appInfoGrid = document.createElement('div');
+        appInfoGrid.className = 'grid grid-cols-2 gap-4';
+        
+        // App index
+        const indexItem = document.createElement('div');
+        indexItem.className = 'col-span-1';
+        
+        const indexLabel = document.createElement('div');
+        indexLabel.className = 'text-xs font-medium text-gray-500';
+        indexLabel.textContent = 'App Index';
+        
+        const indexValue = document.createElement('div');
+        indexValue.className = 'mt-1 text-sm text-gray-900';
+        indexValue.textContent = app.app_index;
+        
+        indexItem.appendChild(indexLabel);
+        indexItem.appendChild(indexValue);
+        
+        // Contact count
+        const contactItem = document.createElement('div');
+        contactItem.className = 'col-span-1';
+        
+        const contactLabel = document.createElement('div');
+        contactLabel.className = 'text-xs font-medium text-gray-500';
+        contactLabel.textContent = 'Contact Count';
+        
+        const contactValue = document.createElement('div');
+        contactValue.className = 'mt-1 text-sm text-gray-900';
+        contactValue.innerHTML = `<span class="${getContactBadgeClass(app.extracted_emails.length)}">${app.extracted_emails.length}</span>`;
+        
+        contactItem.appendChild(contactLabel);
+        contactItem.appendChild(contactValue);
+        
+        appInfoGrid.appendChild(indexItem);
+        appInfoGrid.appendChild(contactItem);
+        
+        appInfo.appendChild(appInfoTitle);
+        appInfo.appendChild(appInfoGrid);
+        
+        // Contacts section
+        const contactsSection = document.createElement('div');
+        contactsSection.className = 'mb-6';
+        
+        const contactsHeader = document.createElement('div');
+        contactsHeader.className = 'flex justify-between items-center mb-3';
+        
+        const contactsTitle = document.createElement('h4');
+        contactsTitle.className = 'text-sm font-medium text-gray-500 uppercase tracking-wider';
+        contactsTitle.textContent = 'Contacts';
+        
+        // Email selection controls
+        const emailControls = document.createElement('div');
+        emailControls.className = 'flex space-x-2';
+        
+        const selectAllButton = document.createElement('button');
+        selectAllButton.className = 'text-xs text-primary hover:text-primary-dark flex items-center';
+        selectAllButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Select All
+        `;
+        
+        const deselectAllButton = document.createElement('button');
+        deselectAllButton.className = 'text-xs text-gray-500 hover:text-gray-700 flex items-center';
+        deselectAllButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Deselect All
+        `;
+        
+        const addEmailButton = document.createElement('button');
+        addEmailButton.className = 'text-xs text-blue-500 hover:text-blue-700 flex items-center';
+        addEmailButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Add Email
+        `;
+        
+        emailControls.appendChild(selectAllButton);
+        emailControls.appendChild(deselectAllButton);
+        emailControls.appendChild(addEmailButton);
+        
+        contactsHeader.appendChild(contactsTitle);
+        contactsHeader.appendChild(emailControls);
+        
+        contactsSection.appendChild(contactsHeader);
+        
+        // Initialize selected emails for this app if not already done
+        if (!app.selectedEmails) {
+            app.selectedEmails = [...app.extracted_emails]; // Default to all selected
+        }
+        
+        // Initialize custom emails array if not already done
+        if (!app.customEmails) {
+            app.customEmails = [];
+        }
+        
+        // Contacts list
+        const contactsList = document.createElement('div');
+        contactsList.className = 'space-y-2';
+        
+        // Function to render the email list
+        function renderEmailList() {
+            contactsList.innerHTML = '';
+            
+            // Render original emails
+            app.extracted_emails.forEach((email, index) => {
+                const contactItem = document.createElement('div');
+                contactItem.className = 'flex items-center p-2 bg-gray-50 rounded';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'email-checkbox mr-3 rounded text-primary focus:ring-primary focus:ring-offset-0 h-4 w-4';
+                checkbox.checked = app.selectedEmails.includes(email);
+                checkbox.dataset.email = email;
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        if (!app.selectedEmails.includes(email)) {
+                            app.selectedEmails.push(email);
+                        }
+                    } else {
+                        app.selectedEmails = app.selectedEmails.filter(e => e !== email);
+                    }
+                });
+                
+                const contactIcon = document.createElement('div');
+                contactIcon.className = 'mr-3 flex-shrink-0 h-8 w-8 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center';
+                contactIcon.innerHTML = `<span class="text-xs font-medium">${index + 1}</span>`;
+                
+                const contactEmail = document.createElement('div');
+                contactEmail.className = 'text-sm text-gray-900 flex-grow';
+                contactEmail.textContent = email;
+                
+                contactItem.appendChild(checkbox);
+                contactItem.appendChild(contactIcon);
+                contactItem.appendChild(contactEmail);
+                
+                contactsList.appendChild(contactItem);
+            });
+            
+            // Render custom emails
+            app.customEmails.forEach((email, index) => {
+                const contactItem = document.createElement('div');
+                contactItem.className = 'flex items-center p-2 bg-green-50 rounded';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'email-checkbox mr-3 rounded text-primary focus:ring-primary focus:ring-offset-0 h-4 w-4';
+                checkbox.checked = app.selectedEmails.includes(email);
+                checkbox.dataset.email = email;
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        if (!app.selectedEmails.includes(email)) {
+                            app.selectedEmails.push(email);
+                        }
+                    } else {
+                        app.selectedEmails = app.selectedEmails.filter(e => e !== email);
+                    }
+                });
+                
+                const contactIcon = document.createElement('div');
+                contactIcon.className = 'mr-3 flex-shrink-0 h-8 w-8 rounded-full bg-green-100 text-green-500 flex items-center justify-center';
+                contactIcon.innerHTML = `<span class="text-xs font-medium">C${index + 1}</span>`;
+                
+                const contactEmail = document.createElement('div');
+                contactEmail.className = 'text-sm text-gray-900 flex-grow';
+                contactEmail.textContent = email;
+                
+                const removeButton = document.createElement('button');
+                removeButton.className = 'text-red-500 hover:text-red-700';
+                removeButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                `;
+                removeButton.addEventListener('click', function() {
+                    app.customEmails = app.customEmails.filter(e => e !== email);
+                    app.selectedEmails = app.selectedEmails.filter(e => e !== email);
+                    renderEmailList();
+                });
+                
+                contactItem.appendChild(checkbox);
+                contactItem.appendChild(contactIcon);
+                contactItem.appendChild(contactEmail);
+                contactItem.appendChild(removeButton);
+                
+                contactsList.appendChild(contactItem);
+            });
+        }
+        
+        // Initial render
+        renderEmailList();
+        
+        // Select all emails
+        selectAllButton.addEventListener('click', function() {
+            const allEmails = [...app.extracted_emails, ...app.customEmails];
+            app.selectedEmails = [...allEmails];
+            document.querySelectorAll('.email-checkbox').forEach(cb => {
+                cb.checked = true;
+            });
+        });
+        
+        // Deselect all emails
+        deselectAllButton.addEventListener('click', function() {
+            app.selectedEmails = [];
+            document.querySelectorAll('.email-checkbox').forEach(cb => {
+                cb.checked = false;
+            });
+        });
+        
+        // Add custom email
+        addEmailButton.addEventListener('click', function() {
+            const emailInput = document.createElement('div');
+            emailInput.className = 'mt-3 p-3 bg-blue-50 rounded';
+            emailInput.innerHTML = `
+                <div class="flex items-center">
+                    <input type="email" class="flex-grow p-2 border border-gray-300 rounded mr-2" placeholder="Enter email address">
+                    <button type="button" class="add-email-btn px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add</button>
+                    <button type="button" class="cancel-email-btn ml-2 px-3 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancel</button>
+                </div>
+            `;
+            
+            contactsList.appendChild(emailInput);
+            
+            const input = emailInput.querySelector('input');
+            input.focus();
+            
+            // Add button
+            emailInput.querySelector('.add-email-btn').addEventListener('click', function() {
+                const email = input.value.trim();
+                if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    if (!app.extracted_emails.includes(email) && !app.customEmails.includes(email)) {
+                        app.customEmails.push(email);
+                        app.selectedEmails.push(email);
+                        renderEmailList();
+                    } else {
+                        alert('This email already exists in the list.');
+                    }
+                } else {
+                    alert('Please enter a valid email address.');
+                }
+            });
+            
+            // Cancel button
+            emailInput.querySelector('.cancel-email-btn').addEventListener('click', function() {
+                contactsList.removeChild(emailInput);
+            });
+        });
+        
+        contactsSection.appendChild(contactsList);
+        
+        body.appendChild(appInfo);
+        body.appendChild(contactsSection);
+        
+        // Modal footer
+        const footer = document.createElement('div');
+        footer.className = 'px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end';
+        
+        const closeModalButton = document.createElement('button');
+        closeModalButton.className = 'px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400';
+        closeModalButton.textContent = 'Close';
+        closeModalButton.addEventListener('click', () => {
+            document.body.removeChild(backdrop);
+        });
+        
+        footer.appendChild(closeModalButton);
+        
+        // Assemble modal
+        modal.appendChild(header);
+        modal.appendChild(body);
+        modal.appendChild(footer);
+        
+        backdrop.appendChild(modal);
+        
+        // Add click event to backdrop to close modal when clicking outside
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) {
+                document.body.removeChild(backdrop);
+            }
+        });
+        
+        // Add modal to body
+        document.body.appendChild(backdrop);
+    }
+    
+    // Update selected apps
+    function updateSelectedApps() {
+        campaignData.selected_app_indices = Array.from(document.querySelectorAll('.app-checkbox:checked')).map(cb => parseInt(cb.dataset.appIndex));
+    }
+    
+    // Previous page
+    document.getElementById('prev-page').addEventListener('click', function() {
+        if (currentPage > 1) {
+            displayAppsPage(currentPage - 1);
+        }
+    });
+    
+    // Next page
+    document.getElementById('next-page').addEventListener('click', function() {
+        const totalPages = Math.ceil(allApps.length / appsPerPage);
+        if (currentPage < totalPages) {
+            displayAppsPage(currentPage + 1);
+        }
+    });
+    
+    // Select All Apps
+    document.getElementById('select-all-apps').addEventListener('click', function() {
+        document.querySelectorAll('.app-checkbox').forEach(cb => {
+            cb.checked = true;
+        });
+        updateSelectedApps();
+    });
+    
+    // Deselect All Apps
+    document.getElementById('deselect-all-apps').addEventListener('click', function() {
+        document.querySelectorAll('.app-checkbox').forEach(cb => {
+            cb.checked = false;
+        });
+        updateSelectedApps();
+    });
+    
+    // Select All Checkbox
+    document.getElementById('select-all-checkbox').addEventListener('change', function() {
+        const isChecked = this.checked;
+        document.querySelectorAll('.app-checkbox').forEach(cb => {
+            cb.checked = isChecked;
+        });
+        updateSelectedApps();
+    });
+    
+    // Generate Preview
+    document.getElementById('generate-preview').addEventListener('click', function() {
+        updateSelectedApps();
+        
+        if (campaignData.selected_app_indices.length === 0) {
+            showAlert('Please select at least one app for preview.', 'error');
+            return;
+        }
+        
+        // Collect selected emails for each app
+        const selectedAppsWithEmails = campaignData.selected_app_indices.map(index => {
+            const app = allApps.find(a => a.app_index === index);
+            return {
+                app_index: index,
+                selected_emails: app.selectedEmails || app.extracted_emails // Use selected emails if available, otherwise use all
+            };
+        });
+        
+        // Show loader
+        document.getElementById('preview-loader').classList.remove('hidden');
+        document.getElementById('preview-results').classList.add('hidden');
+        
+        // Scroll to the preview section
+        document.getElementById('preview-loader').scrollIntoView({ behavior: 'smooth' });
+        
+        // Call the preview API
+        fetch('/campaign/generate-preview', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                campaign_id: campaignData.campaign_id,
+                app_indices: campaignData.selected_app_indices,
+                selected_keys: campaignData.selected_keys,
+                tone: 'conversational',
+                num_followups: 3,
+                selected_emails: selectedAppsWithEmails
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loader
+            document.getElementById('preview-loader').classList.add('hidden');
+            
+            if (data.error) {
+                // Show error
+                showAlert(`Error: ${data.error}`, 'error');
+            } else {
+                // Show preview results
+                const previewResults = document.getElementById('preview-results');
+                previewResults.classList.remove('hidden');
+                previewResults.innerHTML = '';
+                
+                data.previews.forEach(preview => {
+                    const previewCard = document.createElement('div');
+                    previewCard.className = 'bg-white rounded-lg shadow-md p-4 border-l-4';
+                    
+                    if (preview.status === 'success') {
+                        previewCard.classList.add('border-green-500');
+                        
+                        const appName = allApps.find(app => app.app_index === preview.app_index)?.app_name || `App ${preview.app_index}`;
+                        
+                        const header = document.createElement('div');
+                        header.className = 'flex justify-between items-center mb-3';
+                        
+                        const titleWrapper = document.createElement('div');
+                        titleWrapper.className = 'flex items-center';
+                        
+                        const appIcon = document.createElement('div');
+                        appIcon.className = 'flex-shrink-0 h-8 w-8 rounded-full bg-primary-light text-primary flex items-center justify-center mr-3';
+                        appIcon.innerHTML = `<span class="text-sm font-medium">${appName.charAt(0).toUpperCase()}</span>`;
+                        
+                        const title = document.createElement('h3');
+                        title.className = 'text-lg font-medium text-gray-900';
+                        title.textContent = appName;
+                        
+                        titleWrapper.appendChild(appIcon);
+                        titleWrapper.appendChild(title);
+                        
+                        const badge = document.createElement('span');
+                        badge.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800';
+                        badge.textContent = 'Success';
+                        
+                        header.appendChild(titleWrapper);
+                        header.appendChild(badge);
+                        
+                        const subject = document.createElement('div');
+                        subject.className = 'flex items-center text-sm font-medium text-gray-900 mb-3 bg-gray-50 p-2 rounded';
+                        
+                        const subjectIcon = document.createElement('span');
+                        subjectIcon.className = 'mr-2 text-gray-500';
+                        subjectIcon.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        `;
+                        
+                        const subjectText = document.createElement('span');
+                        subjectText.textContent = preview.content.subject;
+                        
+                        subject.appendChild(subjectIcon);
+                        subject.appendChild(subjectText);
+                        
+                        const emailContent = document.createElement('div');
+                        emailContent.className = 'text-sm text-gray-700 mb-3 p-4 bg-white rounded border border-gray-200 shadow-sm';
+                        emailContent.textContent = preview.content.email1;
+                        
+                        const followupToggle = document.createElement('button');
+                        followupToggle.className = 'text-sm text-primary hover:text-primary-dark flex items-center mb-3';
+                        followupToggle.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                            Show Follow-ups
+                        `;
+                        
+                        const followupContent = document.createElement('div');
+                        followupContent.className = 'hidden space-y-3';
+                        
+                        for (let i = 1; i <= 3; i++) {
+                            if (preview.content[`follow${i}`]) {
+                                const followup = document.createElement('div');
+                                followup.className = 'text-sm text-gray-700 p-4 bg-white rounded border border-gray-200 shadow-sm';
+                                
+                                const followupHeader = document.createElement('div');
+                                followupHeader.className = 'flex items-center font-medium mb-2 text-primary';
+                                
+                                const followupIcon = document.createElement('span');
+                                followupIcon.className = 'mr-2';
+                                followupIcon.innerHTML = `
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                                    </svg>
+                                `;
+                                
+                                const followupTitle = document.createElement('span');
+                                followupTitle.textContent = `Follow-up #${i} (Day ${i*2})`;
+                                
+                                followupHeader.appendChild(followupIcon);
+                                followupHeader.appendChild(followupTitle);
+                                
+                                const followupText = document.createElement('p');
+                                followupText.textContent = preview.content[`follow${i}`];
+                                
+                                followup.appendChild(followupHeader);
+                                followup.appendChild(followupText);
+                                followupContent.appendChild(followup);
+                            }
+                        }
+                        
+                        followupToggle.addEventListener('click', function() {
+                            if (followupContent.classList.contains('hidden')) {
+                                followupContent.classList.remove('hidden');
+                                this.innerHTML = `
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                                    </svg>
+                                    Hide Follow-ups
+                                `;
+                            } else {
+                                followupContent.classList.add('hidden');
+                                this.innerHTML = `
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                    Show Follow-ups
+                                `;
+                            }
+                        });
+                        
+                        previewCard.appendChild(header);
+                        previewCard.appendChild(subject);
+                        previewCard.appendChild(emailContent);
+                        previewCard.appendChild(followupToggle);
+                        previewCard.appendChild(followupContent);
+                    } else {
+                        previewCard.classList.add('border-red-500');
+                        
+                        const header = document.createElement('div');
+                        header.className = 'flex justify-between items-center mb-2';
+                        
+                        const title = document.createElement('h3');
+                        title.className = 'text-lg font-medium text-gray-900';
+                        title.textContent = `App ${preview.app_index}`;
+                        
+                        const badge = document.createElement('span');
+                        badge.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800';
+                        badge.textContent = preview.status;
+                        
+                        header.appendChild(title);
+                        header.appendChild(badge);
+                        
+                        const errorMsg = document.createElement('p');
+                        errorMsg.className = 'text-sm text-red-600';
+                        errorMsg.textContent = preview.error || preview.reason || 'Unknown error';
+                        
+                        previewCard.appendChild(header);
+                        previewCard.appendChild(errorMsg);
+                    }
+                    
+                    previewResults.appendChild(previewCard);
+                });
+            }
+        })
+        .catch(error => {
+            // Hide loader
+            document.getElementById('preview-loader').classList.add('hidden');
+            
+            // Show error
+            showAlert(`Error: ${error.message}`, 'error');
+        });
+    });
+    
+    // Back to Step 3
+    document.getElementById('back-to-step-3').addEventListener('click', function() {
+        goToStep(3);
+    });
+    
+    // Continue to Step 5
+    document.getElementById('continue-to-step-5').addEventListener('click', function() {
+        goToStep(5);
+    });
+    
+    // Step 5: Generate Final Emails
+    document.getElementById('generate-emails-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const tone = formData.get('tone');
+        const numFollowups = parseInt(formData.get('num_followups'));
+        const limit = formData.get('limit') ? parseInt(formData.get('limit')) : null;
+        
+        campaignData.num_followups = numFollowups;
+        
+        // Show loader
+        document.getElementById('generation-loader').classList.remove('hidden');
+        document.getElementById('generation-result').classList.add('hidden');
+        
+        // Collect selected emails for each app
+        const selectedAppsWithEmails = campaignData.selected_app_indices.map(index => {
+            const app = allApps.find(a => a.app_index === index);
+            return {
+                app_index: index,
+                selected_emails: app.selectedEmails || app.extracted_emails // Use selected emails if available, otherwise use all
+            };
+        });
+        
+        // Call the generate emails API
+        fetch('/campaign/generate-emails', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                campaign_id: campaignData.campaign_id,
+                limit: limit,
+                tone: tone,
+                num_followups: numFollowups,
+                selected_keys: campaignData.selected_keys,
+                selected_emails: selectedAppsWithEmails
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loader
+            document.getElementById('generation-loader').classList.add('hidden');
+            
+            if (data.error) {
+                // Show error
+                const resultDiv = document.getElementById('generation-result');
+                resultDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800');
+                resultDiv.classList.add('bg-red-100', 'text-red-800');
+                resultDiv.textContent = `Error: ${data.error}`;
+            } else {
+                // Show success
+                const resultDiv = document.getElementById('generation-result');
+                resultDiv.classList.remove('hidden', 'bg-red-100', 'text-red-800');
+                resultDiv.classList.add('bg-green-100', 'text-green-800');
+                resultDiv.textContent = data.message;
+                
+                // Set max followups in step 6
+                document.getElementById('max-followups').value = numFollowups;
+                
+                // Wait a moment before proceeding
+                setTimeout(() => {
+                    goToStep(6);
+                }, 1500);
+            }
+        })
+        .catch(error => {
+            // Hide loader
+            document.getElementById('generation-loader').classList.add('hidden');
+            
+            // Show error
+            const resultDiv = document.getElementById('generation-result');
+            resultDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800');
+            resultDiv.classList.add('bg-red-100', 'text-red-800');
+            resultDiv.textContent = `Error: ${error.message}`;
+        });
+    });
+    
+    // Back to Step 4
+    document.getElementById('back-to-step-4').addEventListener('click', function() {
+        goToStep(4);
+    });
+    
+    // Step 6: Send Emails
+    document.getElementById('test-mode').addEventListener('change', function() {
+        const testEmailContainer = document.getElementById('test-email-container');
+        if (this.checked) {
+            testEmailContainer.classList.remove('hidden');
+        } else {
+            testEmailContainer.classList.add('hidden');
+        }
+    });
+    
+    document.getElementById('send-emails-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const followupDelayHours = parseInt(formData.get('followup_delay_hours') || 0);
+        const followupDelayMinutes = parseInt(formData.get('followup_delay_minutes') || 0);
+        const maxFollowups = parseInt(formData.get('max_followups'));
+        const testMode = formData.get('test_mode') === 'on';
+        const senderName = formData.get('sender_name');
+        const senderCompany = formData.get('sender_company');
+        const limit = formData.get('limit') ? parseInt(formData.get('limit')) : null;
+        
+        if (followupDelayHours === 0 && followupDelayMinutes === 0) {
+            showAlert('Please specify a follow-up delay.', 'error');
+            return;
+        }
+        
+        // Show loader
+        document.getElementById('sending-loader').classList.remove('hidden');
+        document.getElementById('sending-result').classList.add('hidden');
+        
+        // Call the send emails API
+        fetch('/campaign/send-emails', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                campaign_id: campaignData.campaign_id,
+                followup_delay_hours: followupDelayHours,
+                followup_delay_minutes: followupDelayMinutes,
+                max_followups: maxFollowups,
+                test_mode: testMode,
+                sender_name: senderName,
+                sender_company: senderCompany,
+                limit: limit
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loader
+            document.getElementById('sending-loader').classList.add('hidden');
+            
+            if (data.error) {
+                // Show error
+                const resultDiv = document.getElementById('sending-result');
+                resultDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800');
+                resultDiv.classList.add('bg-red-100', 'text-red-800');
+                resultDiv.textContent = `Error: ${data.error}`;
+            } else {
+                // Show success
+                const resultDiv = document.getElementById('sending-result');
+                resultDiv.classList.remove('hidden', 'bg-red-100', 'text-red-800');
+                resultDiv.classList.add('bg-green-100', 'text-green-800');
+                resultDiv.innerHTML = `
+                    <p class="font-medium">${data.message}</p>
+                    <p class="mt-2">Your campaign is now running in the background. You can monitor its progress on the <a href="/campaign/${campaignData.campaign_id}" class="text-primary hover:underline">campaign details page</a>.</p>
+                    <div class="mt-4 flex space-x-4">
+                        <a href="/campaign/${campaignData.campaign_id}" class="btn-primary">View Campaign</a>
+                        <a href="/" class="btn-secondary">Back to Dashboard</a>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            // Hide loader
+            document.getElementById('sending-loader').classList.add('hidden');
+            
+            // Show error
+            const resultDiv = document.getElementById('sending-result');
+            resultDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800');
+            resultDiv.classList.add('bg-red-100', 'text-red-800');
+            resultDiv.textContent = `Error: ${error.message}`;
+        });
+    });
+    
+    // Back to Step 5
+    document.getElementById('back-to-step-5').addEventListener('click', function() {
+        goToStep(5);
+    });
+</script>
+{% endblock %}

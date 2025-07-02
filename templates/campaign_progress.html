@@ -1,0 +1,332 @@
+{% extends "new_layout.html" %}
+
+{% block title %}Campaign Progress - UndrApp Intel{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <h1 class="text-3xl font-bold text-gray-800">Campaign Progress: {{ campaign_id }}</h1>
+                <span class="badge-{{ progress.stage | replace('_', '-') }}">{{ progress.stage | replace('_', ' ') | title }}</span>
+            </div>
+            <p class="text-gray-600">Last updated: <span id="last-updated">{{ progress.last_updated }}</span></p>
+        </div>
+        <div class="flex gap-3">
+            <button id="refresh-data" class="btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+                Refresh Data
+            </button>
+            <a href="/campaign/{{ campaign_id }}" class="btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                </svg>
+                View Full Details
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Progress Overview -->
+<div class="card mb-8">
+    <div class="card-header">
+        <h2 class="card-title">Progress Overview</h2>
+    </div>
+    <div class="card-body">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Total Apps -->
+            <div class="flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">Total Apps</span>
+                    <span class="text-lg font-semibold">{{ progress.total_apps }}</span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-primary-500 rounded-full" style="width: 100%"></div>
+                </div>
+            </div>
+            
+            <!-- Apps with Contacts -->
+            <div class="flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">Apps with Contacts</span>
+                    <span class="text-lg font-semibold">{{ progress.apps_with_contacts }} / {{ progress.total_apps }}</span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-primary-500 rounded-full" style="width: {{ (progress.apps_with_contacts / progress.total_apps * 100) if progress.total_apps > 0 else 0 }}%"></div>
+                </div>
+            </div>
+            
+            <!-- Background Task -->
+            <div class="flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">Background Task</span>
+                    <span class="text-lg font-semibold">
+                        {% if progress.background_task_active %}
+                            <span class="badge-blue">{{ progress.background_task_details.type | title }} Active</span>
+                        {% else %}
+                            <span class="badge">None</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-primary-500 rounded-full" style="width: {{ 100 if progress.background_task_active else 0 }}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stage Progress -->
+<div class="card mb-8">
+    <div class="card-header">
+        <h2 class="card-title">Stage Progress</h2>
+    </div>
+    <div class="card-body">
+        <div class="space-y-6">
+            <!-- Contact Extraction -->
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">Contact Extraction</span>
+                    <span class="text-lg font-semibold">
+                        {% if progress.stage in ['extraction_done', 'generating_emails', 'emails_generated', 'email_sending', 'followups_active', 'completed'] %}
+                            <span class="text-green-600">Completed</span>
+                        {% elif progress.stage == 'uploaded' %}
+                            <span class="text-yellow-600">Pending</span>
+                        {% else %}
+                            <span class="text-gray-600">Not Started</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-green-500 rounded-full" style="width: {{ 100 if progress.stage in ['extraction_done', 'generating_emails', 'emails_generated', 'email_sending', 'followups_active', 'completed'] else 0 }}%"></div>
+                </div>
+            </div>
+            
+            <!-- Email Generation -->
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">Email Generation</span>
+                    <span class="text-lg font-semibold">
+                        {% if progress.stage in ['emails_generated', 'email_sending', 'followups_active', 'completed'] %}
+                            <span class="text-green-600">Completed</span>
+                        {% elif progress.stage == 'generating_emails' %}
+                            <span class="text-yellow-600">In Progress ({{ progress.total_done }}/{{ progress.total_pending + progress.total_done + progress.total_failed }})</span>
+                        {% elif progress.stage in ['uploaded', 'extraction_done'] %}
+                            <span class="text-yellow-600">Pending</span>
+                        {% else %}
+                            <span class="text-gray-600">Not Started</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    {% if progress.stage in ['emails_generated', 'email_sending', 'followups_active', 'completed'] %}
+                        <div class="h-full bg-green-500 rounded-full" style="width: 100%"></div>
+                    {% elif progress.stage == 'generating_emails' %}
+                        <div class="h-full bg-yellow-500 rounded-full" style="width: {{ (progress.total_done / (progress.total_pending + progress.total_done + progress.total_failed) * 100) if (progress.total_pending + progress.total_done + progress.total_failed) > 0 else 0 }}%"></div>
+                    {% else %}
+                        <div class="h-full bg-gray-500 rounded-full" style="width: 0%"></div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Email Sending -->
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">Email Sending</span>
+                    <span class="text-lg font-semibold">
+                        {% if progress.stage in ['followups_active', 'completed'] %}
+                            <span class="text-green-600">Completed</span>
+                        {% elif progress.stage == 'email_sending' %}
+                            <span class="text-yellow-600">In Progress</span>
+                        {% elif progress.stage in ['uploaded', 'extraction_done', 'generating_emails', 'emails_generated'] %}
+                            <span class="text-yellow-600">Pending</span>
+                        {% else %}
+                            <span class="text-gray-600">Not Started</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    {% if progress.stage in ['followups_active', 'completed'] %}
+                        <div class="h-full bg-green-500 rounded-full" style="width: 100%"></div>
+                    {% elif progress.stage == 'email_sending' %}
+                        <div class="h-full bg-yellow-500 rounded-full" style="width: 50%"></div>
+                    {% else %}
+                        <div class="h-full bg-gray-500 rounded-full" style="width: 0%"></div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Follow-ups -->
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">Follow-ups</span>
+                    <span class="text-lg font-semibold">
+                        {% if progress.stage == 'completed' %}
+                            <span class="text-green-600">Completed</span>
+                        {% elif progress.stage == 'followups_active' %}
+                            <span class="text-yellow-600">In Progress</span>
+                        {% elif progress.stage in ['uploaded', 'extraction_done', 'generating_emails', 'emails_generated', 'email_sending'] %}
+                            <span class="text-yellow-600">Pending</span>
+                        {% else %}
+                            <span class="text-gray-600">Not Started</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    {% if progress.stage == 'completed' %}
+                        <div class="h-full bg-green-500 rounded-full" style="width: 100%"></div>
+                    {% elif progress.stage == 'followups_active' %}
+                        <div class="h-full bg-yellow-500 rounded-full" style="width: 50%"></div>
+                    {% else %}
+                        <div class="h-full bg-gray-500 rounded-full" style="width: 0%"></div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Live Stats -->
+{% if progress.live_stats %}
+<div class="card mb-8">
+    <div class="card-header">
+        <h2 class="card-title">Live Statistics</h2>
+    </div>
+    <div class="card-body">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Total Apps -->
+            <div class="stat-card">
+                <div class="stat-icon bg-blue-100 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="stat-title">Total Apps</h3>
+                    <p class="stat-value">{{ progress.live_stats.total_apps }}</p>
+                </div>
+            </div>
+            
+            <!-- Apps with Contacts -->
+            <div class="stat-card">
+                <div class="stat-icon bg-green-100 text-green-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="stat-title">Apps with Contacts</h3>
+                    <p class="stat-value">{{ progress.live_stats.apps_with_contacts }}</p>
+                </div>
+            </div>
+            
+            <!-- Initial Emails Sent -->
+            <div class="stat-card">
+                <div class="stat-icon bg-purple-100 text-purple-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="stat-title">Initial Emails Sent</h3>
+                    <p class="stat-value">{{ progress.live_stats.initial_emails_sent }}</p>
+                </div>
+            </div>
+            
+            <!-- Reply Rate -->
+            <div class="stat-card">
+                <div class="stat-icon bg-yellow-100 text-yellow-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="stat-title">Reply Rate</h3>
+                    <p class="stat-value">{{ progress.live_stats.reply_rate }}%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Raw JSON Data (for debugging) -->
+<div class="card mb-8">
+    <div class="card-header">
+        <h2 class="card-title">Raw Progress Data</h2>
+    </div>
+    <div class="card-body">
+        <pre class="bg-gray-100 p-4 rounded-lg overflow-auto max-h-96 text-xs">{{ progress | tojson(indent=2) }}</pre>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up refresh interval (every 10 seconds)
+        const refreshInterval = setInterval(refreshData, 10000);
+        
+        // Set up event listeners
+        document.getElementById('refresh-data').addEventListener('click', function() {
+            refreshData();
+            showAlert('Data refreshed successfully', 'success');
+        });
+        
+        // Function to refresh data
+        function refreshData() {
+            fetch('/campaign/progress?campaign_id={{ campaign_id }}')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the page with new data
+                    updateProgressData(data);
+                })
+                .catch(error => {
+                    console.error('Error refreshing data:', error);
+                    showAlert('Failed to refresh data', 'error');
+                });
+        }
+        
+        // Function to update progress data on the page
+        function updateProgressData(data) {
+            // Update last updated timestamp
+            document.getElementById('last-updated').textContent = data.last_updated;
+            
+            // Update other elements as needed
+            // This would be expanded based on the actual structure of your data
+            
+            // For now, just reload the page to show updated data
+            location.reload();
+        }
+        
+        // Function to show alerts
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alert-container');
+            if (!alertContainer) return;
+            
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12'}" />
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            alertContainer.appendChild(alert);
+            
+            // Remove the alert after 3 seconds
+            setTimeout(() => {
+                alert.classList.add('opacity-0');
+                setTimeout(() => {
+                    alertContainer.removeChild(alert);
+                }, 300);
+            }, 3000);
+        }
+    });
+</script>
+{% endblock %}

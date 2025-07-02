@@ -1,0 +1,881 @@
+{% extends "new_layout.html" %}
+
+{% block title %}Dashboard - UndrApp Intel{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-4xl font-bold text-gray-800">Dashboard</h1>
+    <a href="/campaign/new" class="btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+        </svg>
+        New Campaign
+    </a>
+</div>
+
+<!-- Stats Overview -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Campaigns Card -->
+    <div class="stat-card">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-700">Total Campaigns</h3>
+            <div class="p-2 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+            </div>
+        </div>
+        <div class="flex items-end justify-between">
+            <div>
+                <span class="text-3xl font-bold text-gray-800">{{ stats.total_campaigns }}</span>
+                <p class="text-sm text-gray-500 mt-1">All time</p>
+            </div>
+            <div class="text-sm font-medium">
+                {% if stats.campaign_growth > 0 %}
+                <span class="text-green-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ stats.campaign_growth }}%
+                </span>
+                {% elif stats.campaign_growth < 0 %}
+                <span class="text-red-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1v-5a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ stats.campaign_growth|abs }}%
+                </span>
+                {% else %}
+                <span class="text-gray-600">No change</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sent Emails Card -->
+    <div class="stat-card">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-700">Sent Emails</h3>
+            <div class="p-2 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+            </div>
+        </div>
+        <div class="flex items-end justify-between">
+            <div>
+                <span class="text-3xl font-bold text-gray-800">{{ stats.total_emails_sent }}</span>
+                <p class="text-sm text-gray-500 mt-1">All time</p>
+            </div>
+            <div class="text-sm font-medium">
+                {% if stats.email_growth > 0 %}
+                <span class="text-green-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ stats.email_growth }}%
+                </span>
+                {% elif stats.email_growth < 0 %}
+                <span class="text-red-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1v-5a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ stats.email_growth|abs }}%
+                </span>
+                {% else %}
+                <span class="text-gray-600">No change</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Reply Rate Card -->
+    <div class="stat-card">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-700">Reply Rate</h3>
+            <div class="p-2 rounded-lg bg-gradient-to-br from-green-400 to-green-600 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+            </div>
+        </div>
+        <div class="flex items-end justify-between">
+            <div>
+                <span class="text-3xl font-bold text-gray-800">{{ stats.reply_rate }}%</span>
+                <p class="text-sm text-gray-500 mt-1">Average</p>
+            </div>
+            <div class="text-sm font-medium">
+                {% if stats.reply_rate_growth > 0 %}
+                <span class="text-green-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ stats.reply_rate_growth }}%
+                </span>
+                {% elif stats.reply_rate_growth < 0 %}
+                <span class="text-red-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1v-5a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ stats.reply_rate_growth|abs }}%
+                </span>
+                {% else %}
+                <span class="text-gray-600">No change</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Apps Card -->
+    <div class="stat-card">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-700">Total Apps</h3>
+            <div class="p-2 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+        </div>
+        <div class="flex items-end justify-between">
+            <div>
+                <span class="text-3xl font-bold text-gray-800">{{ stats.total_apps }}</span>
+                <p class="text-sm text-gray-500 mt-1">All time</p>
+            </div>
+            <div class="text-sm font-medium">
+                {% if stats.app_growth > 0 %}
+                <span class="text-green-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ stats.app_growth }}%
+                </span>
+                {% elif stats.app_growth < 0 %}
+                <span class="text-red-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1v-5a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ stats.app_growth|abs }}%
+                </span>
+                {% else %}
+                <span class="text-gray-600">No change</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Campaign Status Section -->
+<div class="card mb-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4 md:mb-0">Campaign Status</h2>
+        <div class="flex flex-col sm:flex-row gap-3">
+            <div class="relative">
+                <select id="status-filter" class="input-field pr-10 py-2">
+                    <option value="all">All Statuses</option>
+                    <option value="completed">Completed</option>
+                    <option value="email_sending">Email Sending</option>
+                    <option value="followups_active">Followups Active</option>
+                    <option value="failed">Failed</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+            </div>
+            <button id="export-csv" class="btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                Export CSV
+            </button>
+        </div>
+    </div>
+    
+    <!-- Campaign Table -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campaign ID</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apps</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Initial Emails</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reply Rate</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200" id="campaigns-table-body">
+                {% for campaign in campaigns %}
+                <tr class="hover:bg-gray-50 transition-colors duration-150 campaign-row" data-status="{{ campaign.status }}">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a href="/campaign/{{ campaign.id }}" class="text-primary-600 hover:text-primary-800 font-medium">
+                            {{ campaign.id }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if campaign.status == 'completed' %}
+                        <span class="badge-green">Completed</span>
+                        {% elif campaign.status == 'failed' %}
+                        <span class="badge-red">Failed</span>
+                        {% elif campaign.status == 'email_sending' %}
+                        <span class="badge-blue">Email Sending</span>
+                        {% elif campaign.status == 'followups_active' %}
+                        <span class="badge-purple">Followups Active</span>
+                        {% else %}
+                        <span class="badge">{{ campaign.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-900 mr-2">{{ campaign.apps_with_contacts }}/{{ campaign.total_apps }}</span>
+                            <div class="w-24 bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-primary-600 h-2.5 rounded-full" style="width: {{ (campaign.apps_with_contacts / campaign.total_apps * 100)|round|string }}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ campaign.initial_emails_sent }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if campaign.reply_rate >= 15 %}
+                        <span class="text-green-600 font-medium">{{ campaign.reply_rate }}%</span>
+                        {% elif campaign.reply_rate >= 5 %}
+                        <span class="text-yellow-600 font-medium">{{ campaign.reply_rate }}%</span>
+                        {% else %}
+                        <span class="text-red-600 font-medium">{{ campaign.reply_rate }}%</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex space-x-2">
+                            <a href="/campaign/{{ campaign.id }}" class="text-primary-600 hover:text-primary-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                            {% if campaign.stage == 'emails_generated' or campaign.stats_summary.emails_generated > 0 %}
+                            <button onclick="openSendEmailModal('{{ campaign.id }}')" class="text-green-600 hover:text-green-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                                </svg>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not campaigns %}
+                <tr>
+                    <td colspan="6" class="px-6 py-10 text-center">
+                        <div class="flex flex-col items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                            </svg>
+                            <p class="text-gray-600 mb-4">No campaigns found</p>
+                            <a href="/campaign/new" class="btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                Start a new campaign
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Quick Actions Section -->
+<div class="mb-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- New Campaign Card -->
+        <div class="card hover:bg-primary-50 transition-colors duration-200">
+            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-primary-100 text-primary-600 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">New Campaign</h3>
+            <p class="text-gray-600 mb-4">Start a new outreach campaign with customized templates and targeting.</p>
+            <a href="/campaign/new" class="text-primary-600 hover:text-primary-800 font-medium flex items-center">
+                Get Started
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </a>
+        </div>
+        
+        <!-- Analytics Card -->
+        <div class="card hover:bg-blue-50 transition-colors duration-200">
+            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-blue-100 text-blue-600 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Analytics</h3>
+            <p class="text-gray-600 mb-4">View detailed analytics and insights about your campaigns and performance.</p>
+            <a href="/analytics" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                View Analytics
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </a>
+        </div>
+        
+        <!-- Help & Support Card -->
+        <div class="card hover:bg-purple-50 transition-colors duration-200">
+            <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-purple-100 text-purple-600 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Help & Support</h3>
+            <p class="text-gray-600 mb-4">Get help with campaign setup, troubleshooting, and best practices.</p>
+            <a href="#" class="text-purple-600 hover:text-purple-800 font-medium flex items-center">
+                Get Help
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Send Email Modal -->
+<div id="sendEmailModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex justify-between items-center pb-3">
+                <h3 class="text-xl font-medium text-gray-900">Send Campaign Emails</h3>
+                <button onclick="closeSendEmailModal()" class="text-gray-400 hover:text-gray-500">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="mt-2">
+                <form id="sendEmailForm" class="space-y-4">
+                    <input type="hidden" id="campaignId" name="campaignId">
+                    <input type="hidden" id="maxFollowupsValue" name="maxFollowupsValue">
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="followupDelayHours" class="block text-sm font-medium text-gray-700">Follow-up Delay (Hours)</label>
+                            <input type="number" id="followupDelayHours" name="followupDelayHours" class="input-field" value="0" min="0">
+                        </div>
+                        <div>
+                            <label for="followupDelayMinutes" class="block text-sm font-medium text-gray-700">Follow-up Delay (Minutes)</label>
+                            <input type="number" id="followupDelayMinutes" name="followupDelayMinutes" class="input-field" value="5" min="0" max="59">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="maxFollowups" class="block text-sm font-medium text-gray-700">Maximum Follow-ups (Set during email generation)</label>
+                        <input type="text" id="maxFollowups" name="maxFollowups" class="input-field bg-gray-100" value="2" readonly>
+                    </div>
+                    
+                    <div>
+                        <label for="senderName" class="block text-sm font-medium text-gray-700">Sender Name</label>
+                        <input type="text" id="senderName" name="senderName" class="input-field" value="Vaibhav from UndrAds" required>
+                    </div>
+                    
+                    <div>
+                        <label for="senderCompany" class="block text-sm font-medium text-gray-700">Sender Company</label>
+                        <input type="text" id="senderCompany" name="senderCompany" class="input-field" value="UndrAds" required>
+                    </div>
+                    
+                    <div>
+                        <label for="emailLimit" class="block text-sm font-medium text-gray-700">Email Limit</label>
+                        <input type="number" id="emailLimit" name="emailLimit" class="input-field" value="100" min="0">
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="testMode" name="testMode" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                        <label for="testMode" class="ml-2 block text-sm text-gray-700">Test Mode</label>
+                    </div>
+                    
+                    <div id="testEmailField" class="hidden">
+                        <label for="testEmail" class="block text-sm font-medium text-gray-700">Test Email</label>
+                        <input type="email" id="testEmail" name="testEmail" class="input-field" placeholder="your@email.com">
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-3">
+                        <button type="button" onclick="closeSendEmailModal()" class="btn-secondary">Cancel</button>
+                        <button type="submit" class="btn-primary" id="sendEmailBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                            </svg>
+                            Send Emails
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Store campaign data globally for access in modal functions
+    let campaignsData = [];
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fetch dashboard data from analytics endpoint
+        fetch('/analytics/overall')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error loading dashboard data:', data.error);
+                    showAlert('Error loading dashboard data: ' + data.error, 'error');
+                    return;
+                }
+                
+                // Extract data from the analytics response
+                const stats = {
+                    total_campaigns: data.overall_summary.total_campaigns || 0,
+                    total_emails_sent: data.overall_summary.initial_emails_sent || 0,
+                    reply_rate: data.overall_summary.overall_reply_rate || 0,
+                    total_apps: data.overall_summary.total_apps || 0,
+                    campaign_growth: data.overall_summary.growth.campaign_growth || 0,
+                    email_growth: data.overall_summary.growth.email_growth || 0,
+                    reply_rate_growth: data.overall_summary.growth.reply_rate_growth || 0,
+                    app_growth: data.overall_summary.growth.app_growth || 0
+                };
+                
+                // Transform campaign data to match expected format
+                campaignsData = data.campaign_breakdown.map(campaign => ({
+                    id: campaign.campaign_id,
+                    status: campaign.status,
+                    total_apps: campaign.total_apps || 0,
+                    apps_with_contacts: campaign.apps_with_contacts || 0,
+                    initial_emails_sent: campaign.initial_emails_sent || 0,
+                    reply_rate: campaign.reply_rate || 0,
+                    stats_summary: campaign,
+                    max_followups: campaign.max_followups || 2
+                }));
+                
+                // Update stats
+                updateDashboardStats(stats);
+                
+                // Update campaigns table
+                updateCampaignsTable(campaignsData);
+            })
+            .catch(error => {
+                console.error('Failed to load dashboard data:', error);
+                showAlert('Failed to load dashboard data: ' + error, 'error');
+            });
+    });
+    
+    // Function to update dashboard stats
+    function updateDashboardStats(stats) {
+        // Update total campaigns
+        document.querySelector('.stat-card:nth-child(1) .text-3xl').textContent = stats.total_campaigns;
+        
+        // Update campaign growth indicator
+        updateGrowthIndicator(1, stats.campaign_growth);
+        
+        // Update total emails sent
+        document.querySelector('.stat-card:nth-child(2) .text-3xl').textContent = stats.total_emails_sent;
+        
+        // Update email growth indicator
+        updateGrowthIndicator(2, stats.email_growth);
+        
+        // Update reply rate
+        document.querySelector('.stat-card:nth-child(3) .text-3xl').textContent = stats.reply_rate + '%';
+        
+        // Update reply rate growth indicator
+        updateGrowthIndicator(3, stats.reply_rate_growth);
+        
+        // Update total apps
+        document.querySelector('.stat-card:nth-child(4) .text-3xl').textContent = stats.total_apps;
+        
+        // Update app growth indicator
+        updateGrowthIndicator(4, stats.app_growth);
+    }
+    
+    // Helper function to update growth indicators
+    function updateGrowthIndicator(cardIndex, growthValue) {
+        const card = document.querySelector(`.stat-card:nth-child(${cardIndex})`);
+        const growthElement = card.querySelector('.text-sm.font-medium');
+        
+        if (growthValue > 0) {
+            growthElement.innerHTML = `
+                <span class="text-green-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                    </svg>
+                    ${growthValue}%
+                </span>
+            `;
+        } else if (growthValue < 0) {
+            growthElement.innerHTML = `
+                <span class="text-red-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1v-5a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd" />
+                    </svg>
+                    ${Math.abs(growthValue)}%
+                </span>
+            `;
+        } else {
+            growthElement.innerHTML = `<span class="text-gray-600">No change</span>`;
+        }
+    }
+    
+    // Function to update campaigns table
+    function updateCampaignsTable(campaigns) {
+        const tableBody = document.querySelector('table tbody');
+        
+        // Clear existing rows except the "no campaigns" row
+        const noCampaignsRow = document.querySelector('tr.no-campaigns-row');
+        tableBody.innerHTML = '';
+        
+        if (campaigns.length === 0) {
+            // Show no campaigns message
+            tableBody.innerHTML = `
+                <tr class="no-campaigns-row">
+                    <td colspan="6" class="px-6 py-10 text-center">
+                        <div class="flex flex-col items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                            </svg>
+                            <p class="text-gray-600 mb-4">No campaigns found</p>
+                            <a href="/campaign/new" class="btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                Start a new campaign
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        // Add campaign rows
+        campaigns.forEach(campaign => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50 transition-colors duration-150 campaign-row';
+            row.setAttribute('data-status', campaign.status);
+            
+            // Calculate reply rate
+            let replyRate = 0;
+            if (campaign.stats_summary && campaign.stats_summary.initial_emails_sent > 0) {
+                replyRate = Math.round((campaign.stats_summary.total_replies / campaign.stats_summary.initial_emails_sent) * 100);
+            }
+            
+            // Create row content
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <a href="/campaign/${campaign.id}" class="text-primary-600 hover:text-primary-800 font-medium">
+                        ${campaign.id}
+                    </a>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    ${getStatusBadge(campaign.status)}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-medium text-gray-900 mb-1">
+                            ${campaign.apps_with_contacts || 0}/${campaign.total_apps || 0}
+                        </span>
+                        <div class="w-24 bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-primary-600 h-2.5 rounded-full" style="width: ${campaign.total_apps ? Math.round((campaign.apps_with_contacts / campaign.total_apps) * 100) : 0}%"></div>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ${campaign.initial_emails_sent || 0}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    ${getReplyRateBadge(replyRate)}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div class="flex justify-end space-x-3">
+                        <a href="/campaign/${campaign.id}" class="text-primary-600 hover:text-primary-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                        ${campaign.status === 'emails_generated' || campaign.status === 'email_generating' || campaign.status === 'generated' || (campaign.stats_summary && campaign.stats_summary.emails_generated > 0) ? `
+                            <button onclick="openSendEmailModal('${campaign.id}')" class="text-green-600 hover:text-green-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                                </svg>
+                            </button>
+                        ` : ''}
+                    </div>
+                </td>
+            `;
+            
+            tableBody.appendChild(row);
+        });
+        
+        // Re-initialize status filter
+        initStatusFilter();
+    }
+    
+    // Helper function to get status badge HTML
+    function getStatusBadge(status) {
+        let badgeClass = '';
+        let statusText = status;
+        
+        switch(status) {
+            case 'completed':
+                badgeClass = 'badge-success';
+                statusText = 'Completed';
+                break;
+            case 'email_sending':
+                badgeClass = 'badge-warning';
+                statusText = 'Email Sending';
+                break;
+            case 'followups_active':
+                badgeClass = 'badge-info';
+                statusText = 'Followups Active';
+                break;
+            case 'failed':
+                badgeClass = 'badge-danger';
+                statusText = 'Failed';
+                break;
+            case 'emails_generated':
+                badgeClass = 'badge-primary';
+                statusText = 'Emails Generated';
+                break;
+            case 'generating_emails':
+                badgeClass = 'badge-secondary';
+                statusText = 'Generating Emails';
+                break;
+            case 'extraction_done':
+                badgeClass = 'badge-secondary';
+                statusText = 'Extraction Done';
+                break;
+            case 'uploaded':
+                badgeClass = 'badge-secondary';
+                statusText = 'Uploaded';
+                break;
+            default:
+                badgeClass = 'badge-secondary';
+                statusText = status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
+        }
+        
+        return `<span class="${badgeClass}">${statusText}</span>`;
+    }
+    
+    // Helper function to get reply rate badge HTML
+    function getReplyRateBadge(replyRate) {
+        if (replyRate >= 15) {
+            return `<span class="text-green-600 font-medium">${replyRate}%</span>`;
+        } else if (replyRate >= 5) {
+            return `<span class="text-yellow-600 font-medium">${replyRate}%</span>`;
+        } else {
+            return `<span class="text-red-600 font-medium">${replyRate}%</span>`;
+        }
+    }
+    
+    // Initialize status filter
+    function initStatusFilter() {
+        const statusFilter = document.getElementById('status-filter');
+        const campaignRows = document.querySelectorAll('.campaign-row');
+        
+        if (statusFilter) {
+            statusFilter.addEventListener('change', function() {
+                const selectedStatus = this.value;
+                
+                campaignRows.forEach(row => {
+                    const rowStatus = row.getAttribute('data-status');
+                    
+                    if (selectedStatus === 'all' || rowStatus === selectedStatus) {
+                        row.classList.remove('hidden');
+                    } else {
+                        row.classList.add('hidden');
+                    }
+                });
+            });
+        }
+    }
+    
+    // Send Email Modal Functions
+    function openSendEmailModal(campaignId) {
+        // Find the campaign data
+        const campaign = campaignsData.find(c => c.id === campaignId);
+        
+        // Set campaign ID
+        document.getElementById('campaignId').value = campaignId;
+        
+        // Set max followups from campaign data
+        const maxFollowups = campaign ? (campaign.max_followups || 2) : 2;
+        document.getElementById('maxFollowups').value = maxFollowups;
+        
+        // Show the modal
+        document.getElementById('sendEmailModal').classList.remove('hidden');
+    }
+    
+    function closeSendEmailModal() {
+        document.getElementById('sendEmailModal').classList.add('hidden');
+    }
+    
+    function submitSendEmailForm(event) {
+        event.preventDefault();
+        
+        const form = document.getElementById('sendEmailForm');
+        const submitBtn = document.getElementById('sendEmailBtn');
+        const formData = new FormData(form);
+        const testMode = formData.get('testMode') === 'on';
+        
+        // Validate test email if test mode is enabled
+        if (testMode && !formData.get('testEmail')) {
+            showAlert('Test email is required when test mode is enabled', 'error');
+            return;
+        }
+        
+        // Prepare data for API
+        const data = {
+            campaign_id: formData.get('campaignId'),
+            followup_delay_hours: parseInt(formData.get('followupDelayHours')),
+            followup_delay_minutes: parseInt(formData.get('followupDelayMinutes')),
+            max_followups: parseInt(formData.get('maxFollowups')),
+            test_mode: testMode,
+            sender_name: formData.get('senderName'),
+            sender_company: formData.get('senderCompany'),
+            email_limit: parseInt(formData.get('emailLimit'))
+        };
+        
+        if (testMode) {
+            data.test_email = formData.get('testEmail');
+        }
+        
+        // Disable button and show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending...';
+        
+        // Send API request
+        fetch('/campaign/send-emails', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showAlert(data.error, 'error');
+            } else {
+                showAlert('Email sending started successfully', 'success');
+                closeSendEmailModal();
+                // Reload page after a short delay to show updated status
+                setTimeout(() => window.location.reload(), 1500);
+            }
+        })
+        .catch(error => {
+            showAlert('An error occurred: ' + error, 'error');
+        })
+        .finally(() => {
+            // Reset button state
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg> Send Emails';
+        });
+    }
+    
+    // Show/hide test email field based on test mode checkbox
+    function toggleTestEmailField() {
+        const testMode = document.getElementById('testMode').checked;
+        const testEmailField = document.getElementById('testEmailField');
+        
+        if (testMode) {
+            testEmailField.classList.remove('hidden');
+        } else {
+            testEmailField.classList.add('hidden');
+        }
+    }
+    
+    // Helper function to show alerts
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `fixed top-4 right-4 p-4 rounded-md ${type === 'error' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'} z-50`;
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Send Email Form Event Listeners
+        const sendEmailForm = document.getElementById('sendEmailForm');
+        if (sendEmailForm) {
+            sendEmailForm.addEventListener('submit', submitSendEmailForm);
+        }
+        
+        const testModeCheckbox = document.getElementById('testMode');
+        if (testModeCheckbox) {
+            testModeCheckbox.addEventListener('change', toggleTestEmailField);
+        }
+        
+        // Close modal when clicking outside or pressing escape
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('sendEmailModal');
+            if (event.target === modal) {
+                closeSendEmailModal();
+            }
+        });
+        
+        window.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeSendEmailModal();
+            }
+        });
+        
+        // Export CSV functionality
+        const exportButton = document.getElementById('export-csv');
+        
+        if (exportButton) {
+            exportButton.addEventListener('click', function() {
+                // Get visible rows based on current filter
+                const visibleRows = Array.from(document.querySelectorAll('.campaign-row')).filter(row => !row.classList.contains('hidden'));
+                
+                if (visibleRows.length === 0) {
+                    showAlert('No data to export', 'error');
+                    return;
+                }
+                
+                // Create CSV content
+                let csvContent = 'Campaign ID,Status,Apps With Contacts,Total Apps,Initial Emails Sent,Reply Rate\n';
+                
+                visibleRows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const campaignId = cells[0].textContent.trim();
+                    const status = cells[1].textContent.trim();
+                    const appsText = cells[2].querySelector('span').textContent.trim();
+                    const [appsWithContacts, totalApps] = appsText.split('/');
+                    const initialEmails = cells[3].textContent.trim();
+                    const replyRate = cells[4].textContent.trim();
+                    
+                    csvContent += `${campaignId},${status},${appsWithContacts},${totalApps},${initialEmails},${replyRate}\n`;
+                });
+                
+                // Create and download CSV file
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'campaigns_export.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showAlert('CSV exported successfully', 'success');
+            });
+        }
+    });
+</script>
+{% endblock %}

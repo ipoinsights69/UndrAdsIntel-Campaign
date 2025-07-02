@@ -1,0 +1,1084 @@
+{% extends "layout.html" %}
+
+{% block title %}Campaign Details - UndrApp Intel Campaigns{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <h1 class="text-3xl font-bold text-gray-800">Campaign: {{ campaign_id }}</h1>
+                <div id="status-badge" class="px-3 py-1 rounded-full text-sm font-medium"></div>
+            </div>
+            <p class="text-gray-600">View campaign progress and statistics</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="/" class="btn-secondary flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Back to Dashboard
+            </a>
+            <button id="refresh-btn" class="btn-primary flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+                Refresh Data
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Campaign Status Card -->
+<div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z" />
+            </svg>
+            Campaign Status
+        </h2>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100 shadow-sm">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-sm text-blue-600 font-medium mb-1">Total Apps</p>
+                    <p id="total-apps" class="text-3xl font-bold text-gray-800">-</p>
+                </div>
+                <div class="bg-blue-100 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2a1 1 0 00-.553.894V17zM15.211 6.276a1 1 0 000-1.788l-4.764-2.382a1 1 0 00-.894 0L4.789 4.488a1 1 0 000 1.788l4.764 2.382a1 1 0 00.894 0l4.764-2.382zM4.447 8.342A1 1 0 003 9.236V15a1 1 0 00.553.894l4 2A1 1 0 009 17v-5.764a1 1 0 00-.553-.894l-4-2z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-5 border border-green-100 shadow-sm">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-sm text-green-600 font-medium mb-1">Apps with Contacts</p>
+                    <p id="apps-with-contacts" class="text-3xl font-bold text-gray-800">-</p>
+                </div>
+                <div class="bg-green-100 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-5 border border-purple-100 shadow-sm">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-sm text-purple-600 font-medium mb-1">Emails Generated</p>
+                    <p id="emails-generated" class="text-3xl font-bold text-gray-800">-</p>
+                </div>
+                <div class="bg-purple-100 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-100 shadow-sm">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-sm text-amber-600 font-medium mb-1">Emails Sent</p>
+                    <p id="emails-sent" class="text-3xl font-bold text-gray-800">-</p>
+                </div>
+                <div class="bg-amber-100 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Bars -->
+    <div class="space-y-6 mb-6">
+        <div>
+            <div class="flex justify-between mb-2">
+                <span class="text-sm font-medium text-gray-700 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                    </svg>
+                    Contact Extraction
+                </span>
+                <span id="extraction-percentage" class="text-sm font-medium text-blue-600">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+                <div id="extraction-progress" class="bg-blue-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <div>
+            <div class="flex justify-between mb-2">
+                <span class="text-sm font-medium text-gray-700 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" />
+                    </svg>
+                    Email Generation
+                </span>
+                <span id="generation-percentage" class="text-sm font-medium text-purple-600">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+                <div id="generation-progress" class="bg-purple-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <div>
+            <div class="flex justify-between mb-2">
+                <span class="text-sm font-medium text-gray-700 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                    Email Sending
+                </span>
+                <span id="sending-percentage" class="text-sm font-medium text-amber-600">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+                <div id="sending-progress" class="bg-amber-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4 text-sm text-gray-500 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+        </svg>
+        <p>Last updated: <span id="last-updated" class="font-medium">-</span></p>
+    </div>
+</div>
+
+<!-- Email Statistics Card -->
+<div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
+    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+        </svg>
+        Email Statistics
+    </h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-5 border border-indigo-100 shadow-sm">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-sm text-indigo-600 font-medium mb-1">Emails Sent</p>
+                    <p id="stat-emails-sent" class="text-3xl font-bold text-gray-800">-</p>
+                </div>
+                <div class="bg-indigo-100 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-5 border border-emerald-100 shadow-sm">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-sm text-emerald-600 font-medium mb-1">Replies Received</p>
+                    <p id="stat-replies" class="text-3xl font-bold text-gray-800">-</p>
+                </div>
+                <div class="bg-emerald-100 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gradient-to-br from-rose-50 to-pink-50 rounded-xl p-5 border border-rose-100 shadow-sm">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-sm text-rose-600 font-medium mb-1">Reply Rate</p>
+                    <p id="stat-reply-rate" class="text-3xl font-bold text-gray-800">-</p>
+                </div>
+                <div class="bg-rose-100 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-3">
+                <h3 class="text-lg font-medium text-white flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                        <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
+                    </svg>
+                    Email Sequence
+                </h3>
+            </div>
+            <div class="p-4">
+                <div id="email-sequence-stats" class="space-y-3">
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700 font-medium flex items-center gap-2">
+                            <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
+                            Initial Email
+                        </span>
+                        <span id="initial-email-count" class="text-gray-900 font-semibold bg-blue-50 px-3 py-1 rounded-full">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700 font-medium flex items-center gap-2">
+                            <span class="w-3 h-3 bg-indigo-500 rounded-full"></span>
+                            Follow-up #1
+                        </span>
+                        <span id="followup1-count" class="text-gray-900 font-semibold bg-indigo-50 px-3 py-1 rounded-full">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700 font-medium flex items-center gap-2">
+                            <span class="w-3 h-3 bg-purple-500 rounded-full"></span>
+                            Follow-up #2
+                        </span>
+                        <span id="followup2-count" class="text-gray-900 font-semibold bg-purple-50 px-3 py-1 rounded-full">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-700 font-medium flex items-center gap-2">
+                            <span class="w-3 h-3 bg-violet-500 rounded-full"></span>
+                            Follow-up #3
+                        </span>
+                        <span id="followup3-count" class="text-gray-900 font-semibold bg-violet-50 px-3 py-1 rounded-full">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-3">
+                <h3 class="text-lg font-medium text-white flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Email Status
+                </h3>
+            </div>
+            <div class="p-4">
+                <div id="email-status-stats" class="space-y-3">
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700 font-medium flex items-center gap-2">
+                            <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
+                            Pending
+                        </span>
+                        <span id="pending-count" class="text-gray-900 font-semibold bg-yellow-50 px-3 py-1 rounded-full">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700 font-medium flex items-center gap-2">
+                            <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
+                            Sent
+                        </span>
+                        <span id="sent-count" class="text-gray-900 font-semibold bg-blue-50 px-3 py-1 rounded-full">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700 font-medium flex items-center gap-2">
+                            <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                            Replied
+                        </span>
+                        <span id="replied-count" class="text-gray-900 font-semibold bg-green-50 px-3 py-1 rounded-full">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-700 font-medium flex items-center gap-2">
+                            <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                            Failed
+                        </span>
+                        <span id="failed-count" class="text-gray-900 font-semibold bg-red-50 px-3 py-1 rounded-full">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Apps Table Card -->
+<div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            Apps
+            <span id="apps-count" class="ml-2 text-sm bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-full">0</span>
+        </h2>
+        <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+            <div class="relative flex-grow md:flex-grow-0">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <input type="text" id="search-input" placeholder="Search apps..." class="pl-10 w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-20">
+            </div>
+            <div class="relative">
+                <select id="status-filter" class="appearance-none pl-3 pr-10 py-2 text-sm rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-20 bg-white">
+                    <option value="all">All Status</option>
+                    <option value="has_contacts">Has Contacts</option>
+                    <option value="no_contacts">No Contacts</option>
+                    <option value="generated">Email Generated</option>
+                    <option value="sent">Email Sent</option>
+                    <option value="replied">Replied</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+            <button id="export-csv" class="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                Export
+            </button>
+        </div>
+    </div>
+    
+    <div class="overflow-x-auto border border-gray-200 rounded-xl shadow-sm">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="group px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                        <div class="flex items-center gap-1">
+                            Index
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </th>
+                    <th class="group px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                        <div class="flex items-center gap-1">
+                            App Name
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </th>
+                    <th class="group px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                        <div class="flex items-center gap-1">
+                            Contacts
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </th>
+                    <th class="group px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                        <div class="flex items-center gap-1">
+                            Generation Status
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </th>
+                    <th class="group px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                        <div class="flex items-center gap-1">
+                            Email Status
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="apps-table-body" class="bg-white divide-y divide-gray-200">
+                <!-- Apps will be populated here -->
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-6">
+        <div class="text-sm text-gray-700">
+            Showing <span id="showing-start" class="font-medium">0</span> to <span id="showing-end" class="font-medium">0</span> of <span id="total-items" class="font-medium">0</span> apps
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-700">Page <span id="current-page" class="font-medium">1</span> of <span id="total-pages" class="font-medium">1</span></span>
+            <div class="flex space-x-2">
+                <button id="prev-page" class="flex items-center gap-1 px-3 py-1.5 rounded-md bg-white border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    Previous
+                </button>
+                <button id="next-page" class="flex items-center gap-1 px-3 py-1.5 rounded-md bg-white border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Next
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Email Preview Modal -->
+<div id="email-preview-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden transition-opacity duration-300">
+    <div class="modal-container bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 ease-out scale-95 opacity-0" id="modal-container">
+        <div class="p-6 md:p-8">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-br from-primary to-indigo-600 p-2 rounded-full shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                        </svg>
+                    </div>
+                    <h3 id="modal-app-name" class="text-xl font-bold text-gray-800">App Name</h3>
+                </div>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary hover:rotate-90 transform transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="modal-content" class="space-y-6">
+                <!-- Email content will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Campaign data
+    const campaignId = "{{ campaign_id }}";
+    
+    // Pagination variables
+    let currentPage = 1;
+    let appsPerPage = 10;
+    let allApps = [];
+    let filteredApps = [];
+    
+    // Status colors
+    const statusColors = {
+        'upload_done': { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Upload Complete' },
+        'extraction_done': { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Extraction Complete' },
+        'generating': { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Generating Emails' },
+        'generation_done': { bg: 'bg-green-100', text: 'text-green-800', label: 'Generation Complete' },
+        'sending': { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Sending Emails' },
+        'completed': { bg: 'bg-green-100', text: 'text-green-800', label: 'Completed' },
+        'failed': { bg: 'bg-red-100', text: 'text-red-800', label: 'Failed' }
+    };
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchCampaignProgress();
+        fetchApps();
+        
+        // Set up refresh interval (every 10 seconds)
+        setInterval(fetchCampaignProgress, 10000);
+    });
+    
+    // Fetch campaign progress
+    function fetchCampaignProgress() {
+        fetch(`/campaign/progress?campaign_id=${campaignId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showAlert(`Error: ${data.error}`, 'error');
+                    return;
+                }
+                
+                updateCampaignStatus(data);
+            })
+            .catch(error => {
+                console.error('Error fetching campaign progress:', error);
+            });
+    }
+    
+    // Update campaign status UI
+    function updateCampaignStatus(data) {
+        // Update status badge
+        const statusBadge = document.getElementById('status-badge');
+        const status = data.status;
+        const statusInfo = statusColors[status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: status };
+        
+        statusBadge.className = `px-3 py-1 rounded-full text-sm font-medium ${statusInfo.bg} ${statusInfo.text}`;
+        statusBadge.textContent = statusInfo.label;
+        
+        // Update stats
+        document.getElementById('total-apps').textContent = data.total_apps || 0;
+        document.getElementById('apps-with-contacts').textContent = data.apps_with_contacts || 0;
+        document.getElementById('emails-generated').textContent = data.emails_generated || 0;
+        document.getElementById('emails-sent').textContent = data.emails_sent || 0;
+        
+        // Update progress bars
+        const extractionPercentage = data.apps_with_contacts > 0 ? Math.round((data.apps_with_contacts / data.total_apps) * 100) : 0;
+        document.getElementById('extraction-percentage').textContent = `${extractionPercentage}%`;
+        document.getElementById('extraction-progress').style.width = `${extractionPercentage}%`;
+        
+        const generationPercentage = data.apps_with_contacts > 0 ? Math.round((data.emails_generated / data.apps_with_contacts) * 100) : 0;
+        document.getElementById('generation-percentage').textContent = `${generationPercentage}%`;
+        document.getElementById('generation-progress').style.width = `${generationPercentage}%`;
+        
+        const sendingPercentage = data.emails_generated > 0 ? Math.round((data.emails_sent / data.emails_generated) * 100) : 0;
+        document.getElementById('sending-percentage').textContent = `${sendingPercentage}%`;
+        document.getElementById('sending-progress').style.width = `${sendingPercentage}%`;
+        
+        // Update last updated time
+        const lastUpdated = new Date(data.timestamp).toLocaleString();
+        document.getElementById('last-updated').textContent = lastUpdated;
+        
+        // Update email statistics
+        document.getElementById('stat-emails-sent').textContent = data.emails_sent || 0;
+        document.getElementById('stat-replies').textContent = data.replies || 0;
+        
+        const replyRate = data.emails_sent > 0 ? Math.round((data.replies / data.emails_sent) * 100) : 0;
+        document.getElementById('stat-reply-rate').textContent = `${replyRate}%`;
+        
+        // Update email sequence stats
+        document.getElementById('initial-email-count').textContent = data.email_sequence?.initial || 0;
+        document.getElementById('followup1-count').textContent = data.email_sequence?.followup1 || 0;
+        document.getElementById('followup2-count').textContent = data.email_sequence?.followup2 || 0;
+        document.getElementById('followup3-count').textContent = data.email_sequence?.followup3 || 0;
+        
+        // Update email status stats
+        document.getElementById('pending-count').textContent = data.email_status?.pending || 0;
+        document.getElementById('sent-count').textContent = data.email_status?.sent || 0;
+        document.getElementById('replied-count').textContent = data.email_status?.replied || 0;
+        document.getElementById('failed-count').textContent = data.email_status?.failed || 0;
+    }
+    
+    // Fetch apps
+    function fetchApps() {
+        fetch(`/campaign/${campaignId}/apps`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showAlert(`Error: ${data.error}`, 'error');
+                    return;
+                }
+                
+                allApps = data.apps;
+                filteredApps = [...allApps];
+                
+                // Update pagination
+                updatePagination();
+                
+                // Display first page
+                displayAppsPage(1);
+                
+                // Set up event listeners for filtering
+                setupFiltering();
+            })
+            .catch(error => {
+                console.error('Error fetching apps:', error);
+            });
+    }
+    
+    // Set up filtering
+    function setupFiltering() {
+        const statusFilter = document.getElementById('status-filter');
+        const searchInput = document.getElementById('search-input');
+        
+        statusFilter.addEventListener('change', applyFilters);
+        searchInput.addEventListener('input', applyFilters);
+    }
+    
+    // Apply filters
+    function applyFilters() {
+        const statusFilter = document.getElementById('status-filter').value;
+        const searchTerm = document.getElementById('search-input').value.toLowerCase();
+        
+        filteredApps = allApps.filter(app => {
+            // Apply status filter
+            if (statusFilter !== 'all') {
+                if (statusFilter === 'has_contacts' && !app.has_contacts) return false;
+                if (statusFilter === 'no_contacts' && app.has_contacts) return false;
+                if (statusFilter === 'generated' && !app.email_generated) return false;
+                if (statusFilter === 'sent' && !app.email_sent) return false;
+                if (statusFilter === 'replied' && !app.email_replied) return false;
+            }
+            
+            // Apply search filter
+            if (searchTerm) {
+                const appName = (app.app_name || '').toLowerCase();
+                return appName.includes(searchTerm);
+            }
+            
+            return true;
+        });
+        
+        // Reset to first page and update display
+        currentPage = 1;
+        updatePagination();
+        displayAppsPage(1);
+    }
+    
+    // Update pagination
+    function updatePagination() {
+        const totalPages = Math.ceil(filteredApps.length / appsPerPage);
+        document.getElementById('total-pages').textContent = totalPages;
+        document.getElementById('current-page').textContent = currentPage;
+        
+        // Update pagination buttons
+        document.getElementById('prev-page').disabled = currentPage === 1;
+        document.getElementById('next-page').disabled = currentPage === totalPages || totalPages === 0;
+    }
+    
+    // Display apps page
+    function displayAppsPage(page) {
+        currentPage = page;
+        const startIndex = (page - 1) * appsPerPage;
+        const endIndex = Math.min(startIndex + appsPerPage, filteredApps.length);
+        const pageApps = filteredApps.slice(startIndex, endIndex);
+        
+        // Update table
+        const tableBody = document.getElementById('apps-table-body');
+        tableBody.innerHTML = '';
+        
+        // Update apps count badge
+        document.getElementById('apps-count').textContent = allApps.length;
+        
+        // Update showing counts
+        document.getElementById('showing-start').textContent = filteredApps.length > 0 ? startIndex + 1 : 0;
+        document.getElementById('showing-end').textContent = endIndex;
+        document.getElementById('total-items').textContent = filteredApps.length;
+        
+        if (pageApps.length === 0) {
+            const row = document.createElement('tr');
+            const cell = document.createElement('td');
+            cell.colSpan = 6;
+            cell.className = 'px-6 py-8 text-center';
+            cell.innerHTML = `
+                <div class="flex flex-col items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-gray-500 font-medium">No apps found matching the current filters.</span>
+                    <button id="reset-filters" class="mt-2 text-primary text-sm hover:underline focus:outline-none">Reset filters</button>
+                </div>
+            `;
+            row.appendChild(cell);
+            tableBody.appendChild(row);
+            
+            // Add event listener to reset filters button
+            document.getElementById('reset-filters').addEventListener('click', function() {
+                document.getElementById('status-filter').value = 'all';
+                document.getElementById('search-input').value = '';
+                applyFilters();
+            });
+            
+            return;
+        }
+        
+        pageApps.forEach(app => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50';
+            
+            // Index cell
+            const indexCell = document.createElement('td');
+            indexCell.className = 'px-4 py-2 whitespace-nowrap text-sm text-gray-500';
+            indexCell.textContent = app.app_index;
+            
+            // App name cell
+            const nameCell = document.createElement('td');
+            nameCell.className = 'px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900';
+            nameCell.textContent = app.app_name || `App ${app.app_index}`;
+            
+            // Contacts cell
+            const contactsCell = document.createElement('td');
+            contactsCell.className = 'px-4 py-2 whitespace-nowrap text-sm text-gray-500';
+            
+            if (app.has_contacts) {
+                const contactsBadge = document.createElement('span');
+                contactsBadge.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800';
+                contactsBadge.textContent = app.extracted_emails?.length || 0;
+                contactsCell.appendChild(contactsBadge);
+            } else {
+                const noBadge = document.createElement('span');
+                noBadge.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800';
+                noBadge.textContent = 'None';
+                contactsCell.appendChild(noBadge);
+            }
+            
+            // Generation status cell
+            const generationCell = document.createElement('td');
+            generationCell.className = 'px-4 py-2 whitespace-nowrap text-sm text-gray-500';
+            
+            if (app.email_generated) {
+                const genBadge = document.createElement('span');
+                genBadge.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800';
+                genBadge.textContent = 'Generated';
+                generationCell.appendChild(genBadge);
+            } else if (app.has_contacts) {
+                const pendingBadge = document.createElement('span');
+                pendingBadge.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800';
+                pendingBadge.textContent = 'Pending';
+                generationCell.appendChild(pendingBadge);
+            } else {
+                const naBadge = document.createElement('span');
+                naBadge.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800';
+                naBadge.textContent = 'N/A';
+                generationCell.appendChild(naBadge);
+            }
+            
+            // Email status cell
+            const emailStatusCell = document.createElement('td');
+            emailStatusCell.className = 'px-4 py-2 whitespace-nowrap text-sm text-gray-500';
+            
+            if (app.email_tracking) {
+                let status = 'Pending';
+                let statusClass = 'bg-yellow-100 text-yellow-800';
+                
+                if (app.email_tracking.replied) {
+                    status = 'Replied';
+                    statusClass = 'bg-green-100 text-green-800';
+                } else if (app.email_tracking.sent) {
+                    status = 'Sent';
+                    statusClass = 'bg-blue-100 text-blue-800';
+                } else if (app.email_tracking.failed) {
+                    status = 'Failed';
+                    statusClass = 'bg-red-100 text-red-800';
+                }
+                
+                const statusBadge = document.createElement('span');
+                statusBadge.className = `px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}`;
+                statusBadge.textContent = status;
+                emailStatusCell.appendChild(statusBadge);
+            } else {
+                const naBadge = document.createElement('span');
+                naBadge.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800';
+                naBadge.textContent = 'N/A';
+                emailStatusCell.appendChild(naBadge);
+            }
+            
+            // Actions cell
+            const actionsCell = document.createElement('td');
+            actionsCell.className = 'px-4 py-2 whitespace-nowrap text-sm text-gray-500';
+            
+            if (app.email_generated) {
+                const viewButton = document.createElement('button');
+                viewButton.className = 'text-primary hover:underline';
+                viewButton.textContent = 'View Email';
+                viewButton.addEventListener('click', () => {
+                    showEmailPreview(app);
+                });
+                actionsCell.appendChild(viewButton);
+            } else {
+                const disabledButton = document.createElement('span');
+                disabledButton.className = 'text-gray-400';
+                disabledButton.textContent = 'No Email';
+                actionsCell.appendChild(disabledButton);
+            }
+            
+            // Append cells to row
+            row.appendChild(indexCell);
+            row.appendChild(nameCell);
+            row.appendChild(contactsCell);
+            row.appendChild(generationCell);
+            row.appendChild(emailStatusCell);
+            row.appendChild(actionsCell);
+            
+            // Append row to table
+            tableBody.appendChild(row);
+        });
+        
+        // Update pagination
+        updatePagination();
+    }
+    
+    // Show email preview
+    function showEmailPreview(app) {
+        const modal = document.getElementById('email-preview-modal');
+        const modalContainer = document.getElementById('modal-container');
+        const modalAppName = document.getElementById('modal-app-name');
+        const modalContent = document.getElementById('modal-content');
+        
+        modalAppName.textContent = app.app_name || `App ${app.app_index}`;
+        modalContent.innerHTML = '';
+        
+        // Show modal with animation
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContainer.classList.remove('scale-95', 'opacity-0');
+            modalContainer.classList.add('scale-100', 'opacity-100');
+        }, 10);
+        
+        if (app.email_content) {
+            // Subject
+            const subject = document.createElement('div');
+            subject.className = 'mb-6 bg-white rounded-lg border border-gray-100 shadow-sm p-4';
+            const subjectLabel = document.createElement('p');
+            subjectLabel.className = 'text-sm font-medium text-gray-500 mb-2 flex items-center gap-2';
+            
+            // Add icon to subject label
+            const subjectIcon = document.createElement('span');
+            subjectIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M2.94 6.412A2 2 0 002 8.108V16a2 2 0 002 2h12a2 2 0 002-2V8.108a2 2 0 00-.94-1.696l-6-3.75a2 2 0 00-2.12 0l-6 3.75zm2.615 2.423a1 1 0 10-1.11 1.664l5 3.333a1 1 0 001.11 0l5-3.333a1 1 0 00-1.11-1.664L10 11.798 5.555 8.835z" clip-rule="evenodd" />
+            </svg>`;
+            
+            subjectLabel.appendChild(subjectIcon);
+            subjectLabel.appendChild(document.createTextNode('Subject:'));
+            
+            const subjectText = document.createElement('p');
+            subjectText.className = 'text-base font-medium text-gray-800';
+            subjectText.textContent = app.email_content.subject;
+            subject.appendChild(subjectLabel);
+            subject.appendChild(subjectText);
+            modalContent.appendChild(subject);
+            
+            // Initial email
+            const initialEmail = document.createElement('div');
+            initialEmail.className = 'mb-6 bg-white rounded-lg border border-gray-100 shadow-sm p-4';
+            const initialLabel = document.createElement('p');
+            initialLabel.className = 'text-sm font-medium text-gray-500 mb-2 flex items-center gap-2';
+            
+            // Add icon to initial email label
+            const initialIcon = document.createElement('span');
+            initialIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+            </svg>`;
+            
+            initialLabel.appendChild(initialIcon);
+            initialLabel.appendChild(document.createTextNode('Initial Email:'));
+            
+            const initialText = document.createElement('div');
+            initialText.className = 'text-sm p-4 bg-gray-50 rounded-lg whitespace-pre-wrap border border-gray-100';
+            initialText.textContent = app.email_content.email1;
+            initialEmail.appendChild(initialLabel);
+            initialEmail.appendChild(initialText);
+            modalContent.appendChild(initialEmail);
+            
+            // Follow-ups
+            for (let i = 1; i <= 3; i++) {
+                if (app.email_content[`follow${i}`]) {
+                    const followup = document.createElement('div');
+                    followup.className = 'mb-6 bg-white rounded-lg border border-gray-100 shadow-sm p-4';
+                    const followupLabel = document.createElement('p');
+                    followupLabel.className = 'text-sm font-medium text-gray-500 mb-2 flex items-center gap-2';
+                    
+                    // Add icon to follow-up label
+                    const followupIcon = document.createElement('span');
+                    followupIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd" />
+                    </svg>`;
+                    
+                    followupLabel.appendChild(followupIcon);
+                    followupLabel.appendChild(document.createTextNode(`Follow-up #${i}:`));
+                    
+                    const followupText = document.createElement('div');
+                    followupText.className = 'text-sm p-4 bg-gray-50 rounded-lg whitespace-pre-wrap border border-gray-100';
+                    followupText.textContent = app.email_content[`follow${i}`];
+                    followup.appendChild(followupLabel);
+                    followup.appendChild(followupText);
+                    modalContent.appendChild(followup);
+                }
+            }
+            
+            // Email status
+            if (app.email_tracking) {
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'mt-8 pt-6 border-t border-gray-200';
+                
+                const statusTitle = document.createElement('p');
+                statusTitle.className = 'text-sm font-medium text-gray-700 mb-4 flex items-center gap-2';
+                
+                // Add icon to status title
+                const statusIcon = document.createElement('span');
+                statusIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                </svg>`;
+                
+                statusTitle.appendChild(statusIcon);
+                statusTitle.appendChild(document.createTextNode('Email Tracking Status'));
+                statusDiv.appendChild(statusTitle);
+                
+                const statusList = document.createElement('div');
+                statusList.className = 'space-y-3 bg-white rounded-lg border border-gray-100 shadow-sm p-4';
+                
+                // Initial email status
+                const initialStatus = document.createElement('div');
+                initialStatus.className = 'flex justify-between items-center';
+                const initialStatusLabel = document.createElement('span');
+                initialStatusLabel.className = 'text-sm font-medium flex items-center gap-2';
+                
+                // Add icon to initial status label
+                const initialStatusIcon = document.createElement('span');
+                initialStatusIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                </svg>`;
+                
+                initialStatusLabel.appendChild(initialStatusIcon);
+                initialStatusLabel.appendChild(document.createTextNode('Initial Email:'));
+                
+                const initialStatusValue = document.createElement('span');
+                initialStatusValue.className = 'text-sm font-medium px-3 py-1 rounded-full';
+                
+                if (app.email_tracking.replied) {
+                    initialStatusValue.className += ' bg-green-100 text-green-800';
+                    initialStatusValue.textContent = 'Replied';
+                } else if (app.email_tracking.sent) {
+                    initialStatusValue.className += ' bg-blue-100 text-blue-800';
+                    initialStatusValue.textContent = 'Sent';
+                } else if (app.email_tracking.failed) {
+                    initialStatusValue.className += ' bg-red-100 text-red-800';
+                    initialStatusValue.textContent = 'Failed';
+                } else {
+                    initialStatusValue.className += ' bg-yellow-100 text-yellow-800';
+                    initialStatusValue.textContent = 'Pending';
+                }
+                
+                initialStatus.appendChild(initialStatusLabel);
+                initialStatus.appendChild(initialStatusValue);
+                statusList.appendChild(initialStatus);
+                
+                // Follow-up statuses
+                for (let i = 1; i <= 3; i++) {
+                    if (app.email_content[`follow${i}`]) {
+                        const followupStatus = document.createElement('div');
+                        followupStatus.className = 'flex justify-between items-center';
+                        const followupStatusLabel = document.createElement('span');
+                        followupStatusLabel.className = 'text-sm font-medium flex items-center gap-2';
+                        
+                        // Add icon to follow-up status label
+                        const followupStatusIcon = document.createElement('span');
+                        followupStatusIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd" />
+                        </svg>`;
+                        
+                        followupStatusLabel.appendChild(followupStatusIcon);
+                        followupStatusLabel.appendChild(document.createTextNode(`Follow-up #${i}:`));
+                        
+                        const followupStatusValue = document.createElement('span');
+                        followupStatusValue.className = 'text-sm font-medium px-3 py-1 rounded-full';
+                        
+                        // Determine status based on tracking info
+                        // This is simplified - you'd need to adjust based on your actual data structure
+                        followupStatusValue.className += ' bg-yellow-100 text-yellow-800';
+                        followupStatusValue.textContent = 'Pending';
+                        
+                        followupStatus.appendChild(followupStatusLabel);
+                        followupStatus.appendChild(followupStatusValue);
+                        statusList.appendChild(followupStatus);
+                    }
+                }
+                
+                statusDiv.appendChild(statusList);
+                modalContent.appendChild(statusDiv);
+            }
+        } else {
+            const noContent = document.createElement('p');
+            noContent.className = 'text-gray-500 text-center py-4';
+            noContent.textContent = 'No email content available.';
+            modalContent.appendChild(noContent);
+        }
+        
+        // Show modal
+        modal.classList.remove('hidden');
+    }
+    
+    // Close modal with animation
+    function closeModalWithAnimation() {
+        const modalContainer = document.querySelector('#email-preview-modal .modal-container');
+        modalContainer.classList.remove('scale-100', 'opacity-100');
+        modalContainer.classList.add('scale-95', 'opacity-0');
+        
+        setTimeout(() => {
+            document.getElementById('email-preview-modal').classList.add('hidden');
+        }, 200); // Match this with the CSS transition duration
+    }
+    
+    // Close modal button click
+    document.getElementById('close-modal').addEventListener('click', closeModalWithAnimation);
+    
+    // Close modal when clicking outside
+    document.getElementById('email-preview-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModalWithAnimation();
+        }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !document.getElementById('email-preview-modal').classList.contains('hidden')) {
+            closeModalWithAnimation();
+        }
+    });
+    
+    // Previous page
+    document.getElementById('prev-page').addEventListener('click', function() {
+        if (currentPage > 1) {
+            displayAppsPage(currentPage - 1);
+        }
+    });
+    
+    // Next page
+    document.getElementById('next-page').addEventListener('click', function() {
+        const totalPages = Math.ceil(filteredApps.length / appsPerPage);
+        if (currentPage < totalPages) {
+            displayAppsPage(currentPage + 1);
+        }
+    });
+    
+    // Export to CSV
+    document.getElementById('export-csv').addEventListener('click', function() {
+        if (allApps.length === 0) {
+            showAlert('No data available to export', 'error');
+            return;
+        }
+        
+        // Create CSV content
+        let csvContent = 'data:text/csv;charset=utf-8,\uFEFF';
+        
+        // Add headers
+        csvContent += 'Index,App Name,Has Contacts,Contacts Count,Email Generated,Email Status\n';
+        
+        // Add data rows
+        filteredApps.forEach(app => {
+            const hasContacts = app.has_contacts ? 'Yes' : 'No';
+            const contactsCount = app.extracted_emails?.length || 0;
+            const emailGenerated = app.email_generated ? 'Yes' : 'No';
+            
+            let emailStatus = 'N/A';
+            if (app.email_tracking) {
+                if (app.email_tracking.replied) emailStatus = 'Replied';
+                else if (app.email_tracking.sent) emailStatus = 'Sent';
+                else if (app.email_tracking.failed) emailStatus = 'Failed';
+                else emailStatus = 'Pending';
+            }
+            
+            const row = [
+                app.app_index,
+                `"${(app.app_name || `App ${app.app_index}`).replace(/"/g, '""')}"`,
+                hasContacts,
+                contactsCount,
+                emailGenerated,
+                emailStatus
+            ];
+            
+            csvContent += row.join(',') + '\n';
+        });
+        
+        // Create download link
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', `campaign_${campaignId}_apps_export.csv`);
+        document.body.appendChild(link);
+        
+        // Trigger download
+        link.click();
+        
+        // Clean up
+        document.body.removeChild(link);
+        
+        showAlert('Export completed successfully', 'success');
+    });
+</script>
+{% endblock %}
