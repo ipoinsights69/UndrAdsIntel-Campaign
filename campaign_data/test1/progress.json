@@ -1,0 +1,22 @@
+{
+  "stage": "followups_active",
+  "last_updated": "2025-07-08T21:18:34.657437",
+  "total_apps": 1,
+  "apps_with_contacts": 1,
+  "status": "completed",
+  "total_pending": 0,
+  "total_done": 1,
+  "total_failed": 0,
+  "config": {
+    "followup_delay_hours": 0,
+    "followup_delay_minutes": 5,
+    "max_followups": 2,
+    "test_mode": false,
+    "sender_name": "Lakshya from UndrAds",
+    "sender_company": "UndrAds",
+    "test_email": null
+  },
+  "initial_emails_sent": 1,
+  "initial_emails_failed": 0,
+  "initial_emails_skipped": 0
+}

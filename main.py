@@ -268,7 +268,7 @@ hard code this promt """
     else:
         system_prompt = f"""
         You are an expert SaaS sales representative for UndrAds, an AI-powered ad monetization platform.
-        Your task is to create a personalized, engaging email sequence.
+        Your task is to create a personalized, engaging email sequence, this mail is from Lakshya from UndrAds.
         - Analyze the provided app data to personalize emails.
         - Highlight how UndrAds automates ad operations and optimizes revenue.
         - Use a {tone} tone.

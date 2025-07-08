@@ -443,7 +443,7 @@ def page_not_found(e):
 
 if __name__ == '__main__':
     import sys
-    port = 8080  # Changed default port to 8080
+    port = 1212 # Changed default port to 8080
     if len(sys.argv) > 1 and sys.argv[1] == '--port' and len(sys.argv) > 2:
         port = int(sys.argv[2])
     app.run(debug=True, host='0.0.0.0', port=port)

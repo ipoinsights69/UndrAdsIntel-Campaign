@@ -109,14 +109,7 @@
             <span class="text-sm mt-2">Generate</span>
         </div>
         
-        <!-- Connector -->
-        <div class="flex-1 h-1 bg-gray-200 mx-2" id="connector-5-6"></div>
-        
-        <!-- Step 6: Send Emails -->
-        <div class="flex flex-col items-center">
-            <div id="step-indicator-6" class="step-indicator">6</div>
-            <span class="text-sm mt-2">Send</span>
-        </div>
+        <!-- No connector or step 6 as we're removing it -->
     </div>
 </div>
 
@@ -544,81 +537,7 @@
         <div id="generation-result" class="hidden mb-4 p-4 rounded-md"></div>
     </div>
     
-    <!-- Step 6: Send Emails -->
-    <div id="step-6" class="step">
-        <h2 class="text-xl font-bold mb-4">Send Emails</h2>
-        <p class="mb-4">Configure email sending settings:</p>
-        
-        <form id="send-emails-form" class="mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label for="followup-delay-hours" class="label">Follow-up Delay (Hours)</label>
-                    <input type="number" id="followup-delay-hours" name="followup_delay_hours" class="input-field" min="0" value="24">
-                </div>
-                
-                <div>
-                    <label for="followup-delay-minutes" class="label">Follow-up Delay (Minutes)</label>
-                    <input type="number" id="followup-delay-minutes" name="followup_delay_minutes" class="input-field" min="0" max="59" value="0">
-                </div>
-            </div>
-            
-            <div class="mb-4">
-                <label for="max-followups" class="label">Max Follow-ups</label>
-                <input type="number" id="max-followups" name="max_followups" class="input-field" readonly>
-                <p class="text-sm text-gray-500 mt-1">This value is set based on your email generation configuration.</p>
-            </div>
-            
-            <div class="mb-4">
-                <div class="flex items-center">
-                    <input type="checkbox" id="test-mode" name="test_mode" class="rounded text-primary focus:ring-primary" checked>
-                    <label for="test-mode" class="ml-2 text-sm font-medium text-gray-700">Test Mode</label>
-                </div>
-                <p class="text-sm text-gray-500 mt-1">When enabled, all emails will be sent to the test email address instead of actual contacts.</p>
-            </div>
-            
-            <div id="test-email-container" class="mb-4">
-                <label for="test-email" class="label">Test Email Address</label>
-                <input type="email" id="test-email" name="test_email" class="input-field" value="{{ test_email }}">
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label for="sender-name" class="label">Sender Name</label>
-                    <input type="text" id="sender-name" name="sender_name" class="input-field" value="The UndrAds Team" required>
-                </div>
-                
-                <div>
-                    <label for="sender-company" class="label">Sender Company</label>
-                    <input type="text" id="sender-company" name="sender_company" class="input-field" value="UndrAds" required>
-                </div>
-            </div>
-            
-            <div class="mb-4">
-                <label for="send-limit" class="label">Limit (Optional)</label>
-                <input type="number" id="send-limit" name="limit" class="input-field" min="1" placeholder="Leave empty for no limit">
-                <p class="text-sm text-gray-500 mt-1">Limit the number of emails to send. Leave empty to send to all apps with contacts.</p>
-            </div>
-            
-            <div class="flex justify-between items-center">
-                <button id="back-to-step-5" class="btn-secondary">Back</button>
-                <button type="submit" class="btn-primary">Start Sending Emails</button>
-            </div>
-        </form>
-        
-        <!-- Sending Loader -->
-        <div id="sending-loader" class="hidden mb-4">
-            <div class="flex items-center justify-center">
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>Starting email sending in background...</span>
-            </div>
-        </div>
-        
-        <!-- Sending Result -->
-        <div id="sending-result" class="hidden mb-4 p-4 rounded-md"></div>
-    </div>
+    <!-- No Step 6 as we're removing it -->
 </div>
 {% endblock %}
 
@@ -714,8 +633,8 @@
         // Show the target step
         document.getElementById(`step-${stepNumber}`).classList.add('active');
         
-        // Update step indicators
-        for (let i = 1; i <= 6; i++) {
+        // Update step indicators - now only 5 steps
+        for (let i = 1; i <= 5; i++) {
             const indicator = document.getElementById(`step-indicator-${i}`);
             if (i < stepNumber) {
                 indicator.classList.remove('active');
@@ -728,7 +647,7 @@
             }
             
             // Update connectors
-            if (i < 6) {
+            if (i < 5) {
                 const connector = document.getElementById(`connector-${i}-${i+1}`);
                 if (i < stepNumber) {
                     connector.classList.add('bg-primary');
@@ -1932,15 +1851,15 @@
                 const resultDiv = document.getElementById('generation-result');
                 resultDiv.classList.remove('hidden', 'bg-red-100', 'text-red-800');
                 resultDiv.classList.add('bg-green-100', 'text-green-800');
-                resultDiv.textContent = data.message;
+                resultDiv.innerHTML = `
+                    <p class="font-medium">Your email generation has started in the background.</p>
+                    <p class="mt-2">Please visit the homepage where a green icon will appear next to your campaign name to send emails.</p>
+                    <div class="mt-4 flex space-x-4">
+                        <a href="/" class="btn-primary">Go to Homepage</a>
+                    </div>
+                `;
                 
-                // Set max followups in step 6
-                document.getElementById('max-followups').value = numFollowups;
-                
-                // Wait a moment before proceeding
-                setTimeout(() => {
-                    goToStep(6);
-                }, 1500);
+                // No need to go to step 6 as we've removed it
             }
         })
         .catch(error => {
@@ -1960,95 +1879,6 @@
         goToStep(4);
     });
     
-    // Step 6: Send Emails
-    document.getElementById('test-mode').addEventListener('change', function() {
-        const testEmailContainer = document.getElementById('test-email-container');
-        if (this.checked) {
-            testEmailContainer.classList.remove('hidden');
-        } else {
-            testEmailContainer.classList.add('hidden');
-        }
-    });
-    
-    document.getElementById('send-emails-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const followupDelayHours = parseInt(formData.get('followup_delay_hours') || 0);
-        const followupDelayMinutes = parseInt(formData.get('followup_delay_minutes') || 0);
-        const maxFollowups = parseInt(formData.get('max_followups'));
-        const testMode = formData.get('test_mode') === 'on';
-        const senderName = formData.get('sender_name');
-        const senderCompany = formData.get('sender_company');
-        const limit = formData.get('limit') ? parseInt(formData.get('limit')) : null;
-        
-        if (followupDelayHours === 0 && followupDelayMinutes === 0) {
-            showAlert('Please specify a follow-up delay.', 'error');
-            return;
-        }
-        
-        // Show loader
-        document.getElementById('sending-loader').classList.remove('hidden');
-        document.getElementById('sending-result').classList.add('hidden');
-        
-        // Call the send emails API
-        fetch('/campaign/send-emails', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                campaign_id: campaignData.campaign_id,
-                followup_delay_hours: followupDelayHours,
-                followup_delay_minutes: followupDelayMinutes,
-                max_followups: maxFollowups,
-                test_mode: testMode,
-                sender_name: senderName,
-                sender_company: senderCompany,
-                limit: limit
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Hide loader
-            document.getElementById('sending-loader').classList.add('hidden');
-            
-            if (data.error) {
-                // Show error
-                const resultDiv = document.getElementById('sending-result');
-                resultDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800');
-                resultDiv.classList.add('bg-red-100', 'text-red-800');
-                resultDiv.textContent = `Error: ${data.error}`;
-            } else {
-                // Show success
-                const resultDiv = document.getElementById('sending-result');
-                resultDiv.classList.remove('hidden', 'bg-red-100', 'text-red-800');
-                resultDiv.classList.add('bg-green-100', 'text-green-800');
-                resultDiv.innerHTML = `
-                    <p class="font-medium">${data.message}</p>
-                    <p class="mt-2">Your campaign is now running in the background. You can monitor its progress on the <a href="/campaign/${campaignData.campaign_id}" class="text-primary hover:underline">campaign details page</a>.</p>
-                    <div class="mt-4 flex space-x-4">
-                        <a href="/campaign/${campaignData.campaign_id}" class="btn-primary">View Campaign</a>
-                        <a href="/" class="btn-secondary">Back to Dashboard</a>
-                    </div>
-                `;
-            }
-        })
-        .catch(error => {
-            // Hide loader
-            document.getElementById('sending-loader').classList.add('hidden');
-            
-            // Show error
-            const resultDiv = document.getElementById('sending-result');
-            resultDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800');
-            resultDiv.classList.add('bg-red-100', 'text-red-800');
-            resultDiv.textContent = `Error: ${error.message}`;
-        });
-    });
-    
-    // Back to Step 5
-    document.getElementById('back-to-step-5').addEventListener('click', function() {
-        goToStep(5);
-    });
+    // No Step 6 code as we've removed it
 </script>
 {% endblock %}
